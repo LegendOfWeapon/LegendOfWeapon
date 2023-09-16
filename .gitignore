@@ -79,5 +79,7 @@ DerivedDataCache/*
 
 ###########
 
+!/Content/Assets/
 /Content/Assets/*
+!/Content/Assets/*.txt
 /Content/StarterContent/*
