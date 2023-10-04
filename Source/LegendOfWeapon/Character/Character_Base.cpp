@@ -8,9 +8,17 @@
 
 // Sets default values
 ACharacter_Base::ACharacter_Base()
+	: m_Cam(nullptr)
+	, m_Arm(nullptr)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	m_Cam = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	m_Arm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+
+	m_Arm->SetupAttachment(GetCapsuleComponent());
+	m_Cam->SetupAttachment(m_Arm);
 
 }
 

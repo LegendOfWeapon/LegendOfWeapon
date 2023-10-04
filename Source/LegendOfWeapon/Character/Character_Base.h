@@ -17,6 +17,13 @@ UCLASS()
 class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter
 {
 	GENERATED_BODY()
+	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
+	UCameraComponent* m_Cam;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
+	USpringArmComponent* m_Arm;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Input")
