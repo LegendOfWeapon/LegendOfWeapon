@@ -2,12 +2,15 @@
 
 #pragma once
 
+#include "../Header/global.h"
+
 #include "GameFramework/Character.h"
-#include "InputMappingContext.h" 
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "../System/IADataAsset.h"
+#include "InputMappingContext.h" 
+
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
 #include "Character_Base.generated.h"
 
 UCLASS()
@@ -20,7 +23,8 @@ private:
 	TSoftObjectPtr<UInputMappingContext>	InputMapping;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TSoftObjectPtr<UInputAction> MoveAction;
+	TSoftObjectPtr<UIADataAsset>			InputActionSetting;
+
 
 public:
 	// Sets default values for this character's properties

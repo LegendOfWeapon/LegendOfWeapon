@@ -52,13 +52,35 @@ void ACharacter_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	if (nullptr == InputCom) return;
 
-	// 액션이 발생했을때 호출시킬 함수 등록(델리게이트)
-	InputCom->BindAction(MoveAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::Move);
+
+	if (!InputActionSetting.IsNull())
+	{
+		UIADataAsset* pDA = InputActionSetting.LoadSynchronous();
+
+		for (int32 i = 0; i < pDA->IADataArr.Num(); ++i)
+		{
+			if (pDA->IADataArr[i].Action.IsNull())
+				continue;
+
+			switch (pDA->IADataArr[i].Type)
+			{
+			case EInputActionType::MOVE:
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::Move);
+				break;
+
+			//case EInputActionType::ATTACK:
+			//	InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::Attack);
+			//	break;
+
+			}
+		}
+	}
 }
 
 void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Call Move Function!!!!"));
+
 	FVector2D vInput = _Instance.GetValue().Get<FVector2D>();
 
 	GetActorForwardVector()* vInput.X;
