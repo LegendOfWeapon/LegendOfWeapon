@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include "GameFramework/Character.h"
+#include "InputMappingContext.h" 
+#include "GameFramework/CharacterMovementComponent.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Character_Base.generated.h"
@@ -10,6 +14,13 @@ UCLASS()
 class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter
 {
 	GENERATED_BODY()
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TSoftObjectPtr<UInputMappingContext>	InputMapping;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TSoftObjectPtr<UInputAction> MoveAction;
 
 public:
 	// Sets default values for this character's properties
@@ -26,4 +37,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+	void Move(const FInputActionInstance& _Instance);
 };
