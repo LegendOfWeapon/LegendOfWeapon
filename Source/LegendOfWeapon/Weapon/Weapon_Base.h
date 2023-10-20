@@ -3,24 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Animation/SkeletalMeshActor.h"
 #include "Weapon_Base.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class LEGENDOFWEAPON_API AWeapon_Base : public AActor
+class LEGENDOFWEAPON_API AWeapon_Base : public ASkeletalMeshActor
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AWeapon_Base();
 
-protected:
-	// Called when the game starts or when spawned
+
+public:
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+	virtual void Tick(float _DT) override;
 };
