@@ -13,5 +13,4 @@ UCLASS()
 class LEGENDOFWEAPON_API ASpearCharacter_Base : public ACharacter_Base
 {
 	GENERATED_BODY()
-	
 };
