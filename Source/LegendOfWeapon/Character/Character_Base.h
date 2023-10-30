@@ -50,4 +50,7 @@ public:
 
 private:
 	void Move(const FInputActionInstance& _Instance);
+	void RightAttack(const FInputActionInstance& _Instance);
+	void MiddleAttack(const FInputActionInstance& _Instance);
+	void HeavyAttack(const FInputActionInstance& _Instance);
 };

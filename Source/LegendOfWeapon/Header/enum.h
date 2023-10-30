@@ -4,6 +4,8 @@ UENUM(BlueprintType)
 enum class EInputActionType : uint8
 {
 	MOVE,
-	ATTACK,
-	// TODO
+	LIGHT_ATTACK,
+	MIDDLE_ATTACK,
+	HEAVY_ATTACK,
+
 };
