@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "../Header/global.h"
 
 #include "Character_Base.h"
 
@@ -19,7 +20,6 @@ ACharacter_Base::ACharacter_Base()
 
 	m_Arm->SetupAttachment(GetCapsuleComponent());
 	m_Cam->SetupAttachment(m_Arm);
-
 }
 
 // Called when the game starts or when spawned
@@ -40,7 +40,6 @@ void ACharacter_Base::BeginPlay()
 			pSubsystem->AddMappingContext(InputMapping.LoadSynchronous(), 0);
 		}
 	}
-	
 }
 
 // Called every frame
@@ -94,9 +93,14 @@ void ACharacter_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	}
 }
 
+
+// ==================
+// InputAction BindAction
+// ==================
 void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Call Move Function!!!!"));
+	
+	UE_LOG(LogTemp, Warning, TEXT("Character Move Function"));
 
 	FVector2D vInput = _Instance.GetValue().Get<FVector2D>();
 
@@ -124,3 +128,5 @@ void ACharacter_Base::HeavyAttack(const FInputActionInstance& _Instance)
 {
 	// 해당 액션시 수행해야 할 코드 작성
 }
+
+
