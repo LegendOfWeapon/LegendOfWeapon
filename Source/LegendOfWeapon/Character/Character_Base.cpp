@@ -76,9 +76,18 @@ void ACharacter_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::Move);
 				break;
 
-			//case EInputActionType::ATTACK:
-			//	InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::Attack);
-			//	break;
+			case EInputActionType::LIGHT_ATTACK:
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::LightAttack);
+				break;
+
+			case EInputActionType::MIDDLE_ATTACK:
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::MiddleAttack);
+				break;
+
+			case EInputActionType::HEAVY_ATTACK:
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::HeavyAttack);
+				break;
+
 
 			}
 		}
@@ -99,4 +108,19 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		GetCharacterMovement()->AddInputVector(GetActorForwardVector() * vInput.X);
 	if (vInput.Y != 0.f)
 		GetCharacterMovement()->AddInputVector(GetActorRightVector() * vInput.Y);
+}
+
+void ACharacter_Base::LightAttack(const FInputActionInstance& _Instance)
+{
+	// 해당 액션시 수행해야 할 코드 작성
+}
+
+void ACharacter_Base::MiddleAttack(const FInputActionInstance& _Instance)
+{
+	// 해당 액션시 수행해야 할 코드 작성
+}
+
+void ACharacter_Base::HeavyAttack(const FInputActionInstance& _Instance)
+{
+	// 해당 액션시 수행해야 할 코드 작성
 }
