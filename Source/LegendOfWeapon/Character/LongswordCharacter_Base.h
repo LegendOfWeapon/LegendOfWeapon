@@ -27,4 +27,8 @@ public:
 	// Sets default values for this character's properties
 	ALongswordCharacter_Base();
 
+private:
+	virtual void LightAttack(const FInputActionInstance& _Instance) override;
+	virtual void MiddleAttack(const FInputActionInstance& _Instance) override;
+	virtual void HeavyAttack(const FInputActionInstance& _Instance)override;
 };

@@ -25,6 +25,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	USpringArmComponent* m_Arm;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool IsLightAttack;
+
+	int32 ComboCount = 0;
+	bool  bCanCombo  = false;
+
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	TSoftObjectPtr<UAnimMontage>			DefaultMontage; // attack combo montage
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TSoftObjectPtr<UInputMappingContext>	InputMapping;
@@ -32,6 +42,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TSoftObjectPtr<UIADataAsset>			InputActionSetting;
 
+public:
+	TSoftObjectPtr<UAnimMontage> GetDefaultMontage() { return DefaultMontage; }
 
 public:
 	// Sets default values for this character's properties
@@ -48,9 +60,18 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private:
+private:	
+	FTimerHandle ComboTimerHandle;
+	const float ComboWindowTime = 0.5f; // 콤보공격 입력 가능시간 
+	void ComboAttack();
+	void ResetCombo();
+protected:
+	// Triggered BindAction
 	void Move(const FInputActionInstance& _Instance);
-	void LightAttack(const FInputActionInstance& _Instance);
-	void MiddleAttack(const FInputActionInstance& _Instance);
-	void HeavyAttack(const FInputActionInstance& _Instance);
+
+	UFUNCTION()
+	virtual void LightAttack(const FInputActionInstance& _Instance);
+         
+	virtual void MiddleAttack(const FInputActionInstance& _Instance);		 
+	virtual void HeavyAttack(const FInputActionInstance& _Instance);		  
 };
