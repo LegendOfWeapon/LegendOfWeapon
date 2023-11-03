@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "Character_Base.h"
 #include "../Header/global.h"
 
-#include "Character_Base.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -11,6 +11,7 @@
 ACharacter_Base::ACharacter_Base()
 	: m_Cam(nullptr)
 	, m_Arm(nullptr)
+	, IsLightAttack(false)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -100,7 +101,7 @@ void ACharacter_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 {
 	
-	UE_LOG(LogTemp, Warning, TEXT("Character Move Function"));
+	//UE_LOG(LogTemp, Warning, TEXT("Character Move Function"));
 
 	FVector2D vInput = _Instance.GetValue().Get<FVector2D>();
 
@@ -116,17 +117,60 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 
 void ACharacter_Base::LightAttack(const FInputActionInstance& _Instance)
 {
-	// 해당 액션시 수행해야 할 코드 작성
+	UE_LOG(LogTemp, Warning, TEXT("Spear Character LightAttack"));
+
+	if (!IsLightAttack) // 기본공격
+	{
+		IsLightAttack = true;
+		bCanCombo = true;  // 나중에 노티파이로 콤보 가능 시간으로 빼기
+		
+		// 콤보 공격을 이을 수 있는 시간 설정 (0.5)
+		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &ACharacter_Base::ResetCombo, ComboWindowTime, false);
+
+		// 기본 공격 몽타주 재생 (첫 번째 공격 애니메이션 - 'LightAttack' 섹션)
+		GetMesh()->GetAnimInstance()->Montage_Play(DefaultMontage.LoadSynchronous(), 1.0f);
+		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("LightAttack"), DefaultMontage.LoadSynchronous());
+	}
+	else if (bCanCombo && ComboCount < 2)
+	{
+		ComboAttack();
+	}
 }
 
 void ACharacter_Base::MiddleAttack(const FInputActionInstance& _Instance)
 {
-	// 해당 액션시 수행해야 할 코드 작성
 }
 
 void ACharacter_Base::HeavyAttack(const FInputActionInstance& _Instance)
 {
-	// 해당 액션시 수행해야 할 코드 작성
 }
 
 
+void ACharacter_Base::ComboAttack()
+{
+	// 콤보 카운트를 기반으로 콤보 공격 진행
+	ComboCount++;
+	if (ComboCount == 1)
+	{		// 두 번째 공격 애니메이션으로 세팅
+		GetMesh()->GetAnimInstance()->Montage_SetNextSection(FName("LightAttack"), FName("MiddleAttack"), DefaultMontage.LoadSynchronous());
+
+	}
+	else if (ComboCount == 2)
+	{		
+		// 세 번째 공격 애니메이션으로 세팅
+		GetMesh()->GetAnimInstance()->Montage_SetNextSection(FName("MiddleAttack"), FName("HeavyAttack"), DefaultMontage.LoadSynchronous());
+
+		// 콤보 끝, 리셋
+		bCanCombo = false;
+	}
+
+	// 콤보가 계속될 수 있도록 윈도우 타이머 재설정 (0.5초)
+	GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &ACharacter_Base::ResetCombo, ComboWindowTime, false);
+}
+
+void ACharacter_Base::ResetCombo()
+{
+	bCanCombo = false;
+	// 콤보 타이머 취소
+	GetWorld()->GetTimerManager().ClearTimer(ComboTimerHandle);
+}

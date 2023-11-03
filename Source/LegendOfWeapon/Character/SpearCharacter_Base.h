@@ -13,4 +13,21 @@ UCLASS()
 class LEGENDOFWEAPON_API ASpearCharacter_Base : public ACharacter_Base
 {
 	GENERATED_BODY()
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+public:
+	// Sets default values for this character's properties
+	ASpearCharacter_Base();
+
+private:
+	virtual void LightAttack(const FInputActionInstance& _Instance) override;
+	virtual void MiddleAttack(const FInputActionInstance& _Instance) override;
+	virtual void HeavyAttack(const FInputActionInstance& _Instance)override;
 };
