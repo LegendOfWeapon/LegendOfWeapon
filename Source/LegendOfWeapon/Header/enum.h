@@ -8,3 +8,14 @@ enum class EInputActionType : uint8
 	MIDDLE_ATTACK,
 	HEAVY_ATTACK,
 };
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	NONE,
+
+	LONGSWORD,
+	SPEAR,
+
+	END,
+};
