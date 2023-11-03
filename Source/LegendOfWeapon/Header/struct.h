@@ -17,3 +17,17 @@ struct FIAData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UInputAction>	Action;
 };
+
+USTRUCT(Atomic, BlueprintType)
+struct FPlayerInfo {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EWeaponType				WeaponType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	APlayerController*		Controller;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	uint8					playerIndex;
+};
