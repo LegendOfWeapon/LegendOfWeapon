@@ -136,12 +136,15 @@ void ACharacter_Base::SetCurrentHealth(float healthValue)
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
+		UE_LOG(LogTemp, Warning, TEXT("Current HP is %d"), CurrentHealth);
 		OnHealthUpdate();
 	}
 }
 
 float ACharacter_Base::TakeDamage(float DamageTaken, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	Super::TakeDamage(DamageTaken, DamageEvent, EventInstigator, DamageCauser);
+	
 	float damageApplied = CurrentHealth - DamageTaken;
 	SetCurrentHealth(damageApplied);
 	return damageApplied;

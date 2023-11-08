@@ -37,4 +37,11 @@ public:
 	
 private:
 	TArray<FPlayerInfo> PlayerInfoList;
+
+private://temp variables
+	FTimerHandle MyTimerHandle;
+
+public://temp functions
+	void DamagePlayers();
+
 };
