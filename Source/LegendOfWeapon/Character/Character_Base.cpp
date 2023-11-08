@@ -3,7 +3,6 @@
 #include "Character_Base.h"
 #include "../Header/global.h"
 
-
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
@@ -12,6 +11,8 @@ ACharacter_Base::ACharacter_Base()
 	: m_Cam(nullptr)
 	, m_Arm(nullptr)
 	, IsLightAttack(false)
+	, MaxHealth(100.f)
+	, CurrentHealth(MaxHealth)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -21,6 +22,14 @@ ACharacter_Base::ACharacter_Base()
 
 	m_Arm->SetupAttachment(GetCapsuleComponent());
 	m_Cam->SetupAttachment(m_Arm);
+}
+
+void ACharacter_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//현재 체력 리플리케이트
+	DOREPLIFETIME(ACharacter_Base, CurrentHealth);
 }
 
 // Called when the game starts or when spawned
@@ -40,6 +49,34 @@ void ACharacter_Base::BeginPlay()
 			UEnhancedInputLocalPlayerSubsystem* pSubsystem = pLocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 			pSubsystem->AddMappingContext(InputMapping.LoadSynchronous(), 0);
 		}
+	}
+}
+
+void ACharacter_Base::OnRep_CurrentHealth()
+{
+	OnHealthUpdate();
+}
+
+void ACharacter_Base::OnHealthUpdate()
+{
+	//클라이언트 전용 함수 기능
+	if (IsLocallyControlled())
+	{
+		FString healthMessage = FString::Printf(TEXT("You now have %f health remaining."), CurrentHealth);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+
+		if (CurrentHealth <= 0)
+		{
+			FString deathMessage = FString::Printf(TEXT("You have been killed."));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
+		}
+	}
+
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		FString healthMessage = FString::Printf(TEXT("%s now has %f health remaining."), *GetFName().ToString(), CurrentHealth);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
 	}
 }
 
@@ -92,6 +129,25 @@ void ACharacter_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 			}
 		}
 	}
+}
+
+void ACharacter_Base::SetCurrentHealth(float healthValue)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
+		UE_LOG(LogTemp, Warning, TEXT("Current HP is %d"), CurrentHealth);
+		OnHealthUpdate();
+	}
+}
+
+float ACharacter_Base::TakeDamage(float DamageTaken, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageTaken, DamageEvent, EventInstigator, DamageCauser);
+	
+	float damageApplied = CurrentHealth - DamageTaken;
+	SetCurrentHealth(damageApplied);
+	return damageApplied;
 }
 
 

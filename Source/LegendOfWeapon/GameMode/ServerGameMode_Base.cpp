@@ -9,9 +9,9 @@ AServerGameMode_Base::AServerGameMode_Base()
 
 void AServerGameMode_Base::BeginPlay()
 {
-	Super::BeginPlay();
-	
-	
+	Super::BeginPlay();	
+
+	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, this, &AServerGameMode_Base::DamagePlayers, 1.0f, true, 10.0f);
 }
 
 void AServerGameMode_Base::Tick(float DeltaTime)
@@ -145,5 +145,18 @@ void AServerGameMode_Base::PlayerCharacterPossesing(EWeaponType player1, EWeapon
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("PawnSelecting is failed"));
 		ensure(false);
+	}
+}
+
+void AServerGameMode_Base::DamagePlayers()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Function of DamagePlayers is called"));
+	for (int i = 0; i < PlayerInfoList.Num(); i++) {
+		if (PlayerInfoList[i].Controller) {
+			AActor* playerActor = PlayerInfoList[i].Controller->GetPawn();
+			if (playerActor) {
+				UGameplayStatics::ApplyDamage(playerActor, 10.0f, nullptr, nullptr, NULL);
+			}
+		}
 	}
 }
