@@ -19,3 +19,10 @@ enum class EWeaponType : uint8
 
 	END,
 };
+
+enum class EAttackTypes : uint8
+{
+	LIGHT,
+	MIDDLE,
+	HEAVY,
+};

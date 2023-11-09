@@ -99,18 +99,19 @@ public://Get(),Set() Collection
 	UFUNCTION(BlueprintPure, Category = "Health")
 		FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
 
-private:	
+private:	//Input
 	FTimerHandle ComboTimerHandle;
 	const float ComboWindowTime = 0.5f; // 콤보공격 입력 가능시간 
 	void ComboAttack();
 	void ResetCombo();
 protected:
 	// Triggered BindAction
+	UFUNCTION()
 	void Move(const FInputActionInstance& _Instance);
-
 	UFUNCTION()
 	virtual void LightAttack(const FInputActionInstance& _Instance);
-         
-	virtual void MiddleAttack(const FInputActionInstance& _Instance);		 
-	virtual void HeavyAttack(const FInputActionInstance& _Instance);		  
+	UFUNCTION()
+	virtual void MiddleAttack(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void HeavyAttack(const FInputActionInstance& _Instance);
 };
