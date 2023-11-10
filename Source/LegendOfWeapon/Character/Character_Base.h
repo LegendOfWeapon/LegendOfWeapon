@@ -110,6 +110,7 @@ protected:
 	void Move(const FInputActionInstance& _Instance);
 	UFUNCTION()
 	virtual void LightAttack(const FInputActionInstance& _Instance);
+
 	UFUNCTION()
 	virtual void MiddleAttack(const FInputActionInstance& _Instance);
 	UFUNCTION()
