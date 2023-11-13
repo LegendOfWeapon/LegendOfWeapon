@@ -99,20 +99,31 @@ public://Get(),Set() Collection
 	UFUNCTION(BlueprintPure, Category = "Health")
 		FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
 
-private:	//Input
+private:	
 	FTimerHandle ComboTimerHandle;
 	const float ComboWindowTime = 0.5f; // 콤보공격 입력 가능시간 
 	void ComboAttack();
 	void ResetCombo();
 protected:
 	// Triggered BindAction
-	UFUNCTION()
 	void Move(const FInputActionInstance& _Instance);
-	UFUNCTION()
-	virtual void LightAttack(const FInputActionInstance& _Instance);
 
 	UFUNCTION()
-	virtual void MiddleAttack(const FInputActionInstance& _Instance);
+	virtual void LightAttack(const FInputActionInstance& _Instance);
+         
+	virtual void MiddleAttack(const FInputActionInstance& _Instance);		 
+	virtual void HeavyAttack(const FInputActionInstance& _Instance);		  
+
+	// 충돌 관련 Delegate
 	UFUNCTION()
-	virtual void HeavyAttack(const FInputActionInstance& _Instance);
+	virtual void OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+		, FVector  _vNormalImpulse, const FHitResult& _Hit);
+
+	UFUNCTION()
+	virtual void BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+		, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult);
+
+	UFUNCTION()
+	virtual void EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+		, int32 _Index);
 };

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "../Character/Character_Base.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Weapon_Base.generated.h"
@@ -15,6 +17,9 @@ public:
 	// Sets default values for this actor's properties
 	AWeapon_Base();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
+	ACharacter_Base* m_pOwner;  //  소유 플레이어
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -22,5 +27,18 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+protected:
+	// 충돌 관련 Delegate
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+		, FVector  _vNormalImpulse, const FHitResult& _Hit);
 
+	UFUNCTION()
+	virtual void BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+		, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult);
+
+	UFUNCTION()
+	virtual void EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+		, int32 _Index);
 };

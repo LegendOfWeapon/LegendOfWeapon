@@ -49,7 +49,12 @@ void ACharacter_Base::BeginPlay()
 			UEnhancedInputLocalPlayerSubsystem* pSubsystem = pLocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 			pSubsystem->AddMappingContext(InputMapping.LoadSynchronous(), 0);
 		}
-	}
+	}	
+	
+	// 충돌 시 호출할 함수 바인딩
+	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ACharacter_Base::OnHit);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACharacter_Base::BeginOverlap);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACharacter_Base::EndOverlap);
 }
 
 void ACharacter_Base::OnRep_CurrentHealth()
@@ -229,4 +234,21 @@ void ACharacter_Base::ResetCombo()
 	bCanCombo = false;
 	// 콤보 타이머 취소
 	GetWorld()->GetTimerManager().ClearTimer(ComboTimerHandle);
+}
+
+
+
+// ===============
+// 충돌 이벤트 함수
+// ===============
+void ACharacter_Base::OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, FVector _vNormalImpulse, const FHitResult& _Hit)
+{
+}
+
+void ACharacter_Base::BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult)
+{
+}
+
+void ACharacter_Base::EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index)
+{
 }
