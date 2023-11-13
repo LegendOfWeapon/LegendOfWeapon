@@ -113,4 +113,17 @@ protected:
          
 	virtual void MiddleAttack(const FInputActionInstance& _Instance);		 
 	virtual void HeavyAttack(const FInputActionInstance& _Instance);		  
+
+	// 충돌 관련 Delegate
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+		, FVector  _vNormalImpulse, const FHitResult& _Hit);
+
+	UFUNCTION()
+	virtual void BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+		, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult);
+
+	UFUNCTION()
+	virtual void EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+		, int32 _Index);
 };
