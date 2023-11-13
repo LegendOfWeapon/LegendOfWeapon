@@ -31,9 +31,9 @@ enum class EAttackTypes : uint8
 UENUM(BlueprintType)
 enum class ECharacterState : uint8
 {
-	Idle,
-	Disabled,
-	Attacking,
-	Blocking,
-	Dead,
+	Idle UMETA(DisplayName = "idle"),
+	Disabled UMETA(DisplayName = "Disabled"),
+	Attacking UMETA(DisplayName = "Attacking"),
+	Blocking UMETA(DisplayName = "Blocking"),
+	Dead UMETA(DisplayName = "Dead"),
 };
