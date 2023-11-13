@@ -23,17 +23,17 @@ enum class EWeaponType : uint8
 UENUM(BlueprintType)
 enum class EAttackTypes : uint8
 {
-	LightAttack UMETA(DisplayName = "LightAttack"),
-	MiddleAttack UMETA(DisplayName = "MiddleAttack"),
-	HeavyAttack UMETA(DisplayName = "HeavyAttack"),
+	LightAttack,
+	MiddleAttack,
+	HeavyAttack,
 };
 
 UENUM(BlueprintType)
 enum class ECharacterState : uint8
 {
-	Idle UMETA(DisplayName = "idle"),
-	Disabled UMETA(DisplayName = "Disabled"),
-	Attacking UMETA(DisplayName = "Attacking"),
-	Blocking UMETA(DisplayName = "Blocking"),
-	Dead UMETA(DisplayName = "Dead"),
+	Idle,
+	Disabled,
+	Attacking,
+	Blocking,
+	Dead,
 };
