@@ -45,7 +45,7 @@ void AWeapon_Base::BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _Oth
 {	
 	ACharacter_Base* pPlayer = Cast<ACharacter_Base>(_OtherActor);
 
-	// 플레이어가 공격 뭐냐에 따라서 데미지를 준다. 
+	// TODO 플레이어가 공격 뭐냐에 따라서 데미지를 주어야 한다. 
 	if (IsValid(pPlayer) && m_pOwner!=pPlayer)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Weapon_Base BeginOverlap"));

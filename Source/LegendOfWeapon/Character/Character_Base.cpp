@@ -247,17 +247,8 @@ void ACharacter_Base::OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherAc
 
 void ACharacter_Base::BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult)
 {
-	////UE_LOG(LogTemp, Warning, TEXT("Character BeginOverlap"));
-	//ALongswordCharacter_Base* pPlayer = Cast<ALongswordCharacter_Base>(_OtherActor);
-	//
-	//if (IsValid(pPlayer))
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("Weapon_Base BeginOverlap"));
-	//}
 }
 
 void ACharacter_Base::EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Character EndOverlap"));
-
 }
