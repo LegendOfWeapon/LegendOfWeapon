@@ -1,19 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "./ServerGameMode_Base.h"
-
-#include "../LegendOfWeapon.h"
-#include "./ServerGameState_Base.h"
+#include "ServerGameMode_Base.h"
 
 AServerGameMode_Base::AServerGameMode_Base()
 {
-	GameStateClass = AServerGameState_Base::StaticClass();
 }
 
 void AServerGameMode_Base::BeginPlay()
 {
-	Super::BeginPlay();
+	Super::BeginPlay();	
 
 	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, this, &AServerGameMode_Base::DamagePlayers, 1.0f, true, 10.0f);
 }
@@ -23,33 +19,9 @@ void AServerGameMode_Base::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AServerGameMode_Base::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
-{
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("==========================================================="));
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
-
-	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
-
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
-}
-
-APlayerController* AServerGameMode_Base::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
-{
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
-
-	APlayerController* NewPlayerController = Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
-
-	return NewPlayerController;
-}
-
 void AServerGameMode_Base::PostLogin(APlayerController* newPlayer)
 {
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
-
 	Super::PostLogin(newPlayer);
-
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
 
 	FPlayerInfo playerInfo;
 	playerInfo.Controller = newPlayer;
@@ -63,17 +35,8 @@ void AServerGameMode_Base::PostLogin(APlayerController* newPlayer)
 	}
 }
 
-void AServerGameMode_Base::StartPlay()
-{
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
-
-	Super::StartPlay();
-
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
-}
-
 TArray<int8> AServerGameMode_Base::GetPlayerIndices()
-{
+{	
 	TArray<int8> indices;
 
 	for (const FPlayerInfo& playerInfo : PlayerInfoList) {
@@ -85,7 +48,7 @@ TArray<int8> AServerGameMode_Base::GetPlayerIndices()
 			UE_LOG(LogTemp, Warning, TEXT("delete playerController"));
 		}
 	}
-
+	
 	return indices;
 }
 
@@ -105,8 +68,8 @@ void AServerGameMode_Base::PlayerCharacterPossesing(EWeaponType player1, EWeapon
 			UE_LOG(LogTemp, Warning, TEXT("PawnSelecting is failed"));
 			ensure(false);
 		}
-	}
-	break;
+	}		
+		break;
 	case EWeaponType::SPEAR:
 	{
 		pawnClass = StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Script/Engine.Blueprint'/Game/BluePrints/Player/Spear/Character/BPC_Spear_Player.BPC_Spear_Player_C'"));
@@ -115,7 +78,7 @@ void AServerGameMode_Base::PlayerCharacterPossesing(EWeaponType player1, EWeapon
 			ensure(false);
 		}
 	}
-	break;
+		break;
 	case EWeaponType::END:
 		break;
 	default:
@@ -139,7 +102,7 @@ void AServerGameMode_Base::PlayerCharacterPossesing(EWeaponType player1, EWeapon
 		UE_LOG(LogTemp, Warning, TEXT("PawnSelecting is failed"));
 		ensure(false);
 	}
-
+		
 	////////////////////////////////////////////////////////
 
 	PlayerInfoList[1].WeaponType = player2;
