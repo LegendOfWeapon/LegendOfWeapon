@@ -29,7 +29,7 @@ void ASpearCharacter_Base::Tick(float DeltaTime)
 
 void ASpearCharacter_Base::LightAttack(const FInputActionInstance& _Instance)
 {
-	Super::LightAttack(_Instance);
+	//Super::LightAttack(_Instance);
 
 	//// 해당 액션시 수행해야 할 코드 작성
 	//UE_LOG(LogTemp, Warning, TEXT("Spear Character LightAttack"));
