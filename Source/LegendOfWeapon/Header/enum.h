@@ -19,3 +19,21 @@ enum class EWeaponType : uint8
 
 	END,
 };
+
+UENUM(BlueprintType)
+enum class EAttackTypes : uint8
+{
+	LightAttack,
+	MiddleAttack,
+	HeavyAttack,
+};
+
+UENUM(BlueprintType)
+enum class ECharacterState : uint8
+{
+	Idle,
+	Disabled,
+	Attacking,
+	Blocking,
+	Dead,
+};

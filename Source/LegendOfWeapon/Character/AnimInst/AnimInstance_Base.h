@@ -5,9 +5,10 @@
 #include "CoreMinimal.h"
 
 #include "../Character_Base.h"
-
+#include "../Header/global.h"
 #include "Animation/AnimInstance.h"
 #include "AnimInstance_Base.generated.h"
+
 
 /**
  * 
@@ -22,6 +23,11 @@ public:
 
 	UPROPERTY(Editanywhere, BlueprintReadWrite, Category = "Reference")
 	UCharacterMovementComponent* Movement;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
+	ECharacterState CharacterStates;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
+	EAttackTypes AttackTypes;
 
 public:
 	virtual void NativeInitializeAnimation() override;

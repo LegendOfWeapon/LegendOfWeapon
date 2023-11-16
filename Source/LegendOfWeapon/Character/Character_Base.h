@@ -31,6 +31,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool IsLightAttack;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
+	ECharacterState CharacterStates;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
+	EAttackTypes AttackTypes;
+
 	int32 ComboCount = 0;
 	bool  bCanCombo  = false;
 
