@@ -29,6 +29,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
 	EAttackTypes AttackTypes;
 
+	//Montage Name define
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Name")
+	FName LightComboAttack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Name")
+	FName DefaultLightComboAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Name")
+	FName MiddleComboAttack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Name")
+	FName DefaultMiddleComboAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Name")
+	FName HeavyComboAttack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Name")
+	FName DefaultHeavyComboAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bool")
+	bool AttackWindowOpen;
+
+
+
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeBeginPlay() override;
