@@ -36,11 +36,7 @@ void ACharacter_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 // Called when the game starts or when spawned
 void ACharacter_Base::BeginPlay()
 {
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
-
 	Super::BeginPlay();
-
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
 
 	APlayerController* pController = Cast<APlayerController>(GetController());
 
