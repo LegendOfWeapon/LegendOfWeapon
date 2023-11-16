@@ -181,27 +181,27 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		GetCharacterMovement()->AddInputVector(GetActorRightVector() * vInput.Y);
 }
 
-//void ACharacter_Base::LightAttack(const FInputActionInstance& _Instance)
-//{
-//	UE_LOG(LogTemp, Warning, TEXT("Spear Character LightAttack"));
-//
-//	if (!IsLightAttack) // 기본공격
-//	{
-//		IsLightAttack = true;
-//		bCanCombo = true;  // 나중에 노티파이로 콤보 가능 시간으로 빼기
-//		
-//		// 콤보 공격을 이을 수 있는 시간 설정 (0.5)
-//		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &ACharacter_Base::ResetCombo, ComboWindowTime, false);
-//
-//		// 기본 공격 몽타주 재생 (첫 번째 공격 애니메이션 - 'LightAttack' 섹션)
-//		GetMesh()->GetAnimInstance()->Montage_Play(DefaultMontage.LoadSynchronous(), 1.0f);
-//		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("LightAttack"), DefaultMontage.LoadSynchronous());
-//	}
-//	else if (bCanCombo && ComboCount < 2)
-//	{
-//		ComboAttack();
-//	}
-//}
+void ACharacter_Base::LightAttack(const FInputActionInstance& _Instance)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Spear Character LightAttack"));
+
+	//if (!IsLightAttack) // 기본공격
+	//{
+	//	IsLightAttack = true;
+	//	bCanCombo = true;  // 나중에 노티파이로 콤보 가능 시간으로 빼기
+	//	
+	//	// 콤보 공격을 이을 수 있는 시간 설정 (0.5)
+	//	GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &ACharacter_Base::ResetCombo, ComboWindowTime, false);
+
+	//	// 기본 공격 몽타주 재생 (첫 번째 공격 애니메이션 - 'LightAttack' 섹션)
+	//	GetMesh()->GetAnimInstance()->Montage_Play(DefaultMontage.LoadSynchronous(), 1.0f);
+	//	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("LightAttack"), DefaultMontage.LoadSynchronous());
+	//}
+	//else if (bCanCombo && ComboCount < 2)
+	//{
+	//	ComboAttack();
+	//}
+}
 
 void ACharacter_Base::MiddleAttack(const FInputActionInstance& _Instance)
 {
