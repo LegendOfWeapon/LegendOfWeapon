@@ -8,6 +8,12 @@
 
 AServerGameMode_Base::AServerGameMode_Base()
 {
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassRef(TEXT("/Script/CoreUObject.Class'/Script/LegendOfWeapon.ServerPlayerController_Base'"));
+	if (PlayerControllerClassRef.Class)
+	{
+		PlayerControllerClass = PlayerControllerClassRef.Class;
+	}
+
 	GameStateClass = AServerGameState_Base::StaticClass();
 }
 
@@ -29,6 +35,7 @@ void AServerGameMode_Base::PreLogin(const FString& Options, const FString& Addre
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
 
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
+	//ErrorMessage = TEXT("Server is full");
 
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
 }
@@ -48,6 +55,19 @@ void AServerGameMode_Base::PostLogin(APlayerController* newPlayer)
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Begin"));
 
 	Super::PostLogin(newPlayer);
+
+	UNetDriver* NetDriver = GetNetDriver();
+	if (NetDriver)
+	{
+		for (const auto& Connection : NetDriver->ClientConnections)
+		{
+			AB_LOG(LogABNetwork, Log, TEXT("Client Connections : %s"), *Connection->GetName());
+		}
+	}
+	else
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("No NetDriver"));
+	}
 
 	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
 
