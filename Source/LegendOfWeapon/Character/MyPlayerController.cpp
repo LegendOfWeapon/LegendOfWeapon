@@ -3,6 +3,8 @@
 
 #include "MyPlayerController.h"
 
+#include "../LegendOfWeapon.h"
+
 
 AMyPlayerController::AMyPlayerController()
 {
@@ -21,7 +23,18 @@ AMyPlayerController::~AMyPlayerController()
 
 void AMyPlayerController::ServerOpenLevel_Implementation()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("ServerTestMap"));
+	if (IsLocalController())
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Client"));
+		UGameplayStatics::OpenLevel(GetWorld(), TEXT("ServerTestMap"));
+	}
+
+	if (GetLocalRole() == ROLE_Authority) {
+		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Server"));
+		//UGameplayStatics::OpenLevel(GetWorld(), TEXT("ServerTestMap"));
+		//this->ClientTravel(TEXT("ServerTestMap"), ETravelType::TRAVEL_Absolute);
+		GetWorld()->ServerTravel(TEXT("ServerTestMap"));
+	}
 }
 
 
