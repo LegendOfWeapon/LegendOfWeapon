@@ -3,6 +3,11 @@
 #include "Character_Base.h"
 #include "../Header/global.h"
 
+#include "../GameMode/ServerPlayerController_Base.h"
+#include "../ui/MainHUD_Base.h"
+#include "../ui/PlayerInfo_Base.h"
+
+
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "../LegendOfWeapon.h"
@@ -51,7 +56,17 @@ void ACharacter_Base::BeginPlay()
 			pSubsystem->AddMappingContext(InputMapping.LoadSynchronous(), 0);
 		}
 	}	
-	
+
+	// HUD 체력 설정
+	AServerPlayerController_Base* pTempController = Cast<AServerPlayerController_Base>(GetController());
+	if (pTempController && pTempController->IsLocalController())
+	{
+		UPlayerInfo_Base* PlayerInfoWidget = pTempController->GetMainHUD()->GetPlayerInfoWidget();
+		PlayerInfoWidget->SetName(TEXT("ReSnow"));
+		PlayerInfoWidget->SetHPBarRatio(0.5f);
+	}
+
+
 	// 충돌 시 호출할 함수 바인딩
 	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ACharacter_Base::OnHit);
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACharacter_Base::BeginOverlap);
