@@ -31,6 +31,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool IsLightAttack;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool IsAttacking;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
 	ECharacterState CharacterStates;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
