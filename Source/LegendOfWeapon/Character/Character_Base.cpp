@@ -63,9 +63,8 @@ void ACharacter_Base::BeginPlay()
 	{
 		UPlayerInfo_Base* PlayerInfoWidget = pTempController->GetMainHUD()->GetPlayerInfoWidget();
 		PlayerInfoWidget->SetName(TEXT("ReSnow"));
-		PlayerInfoWidget->SetHPBarRatio(0.5f);
+		PlayerInfoWidget->SetHPBarRatio(1.f);
 	}
-
 
 	// 충돌 시 호출할 함수 바인딩
 	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ACharacter_Base::OnHit);
@@ -111,6 +110,17 @@ void ACharacter_Base::OnHealthUpdate()
 	//클라이언트 전용 함수 기능
 	if (IsLocallyControlled())
 	{
+		// HUD 체력 설정
+		AServerPlayerController_Base* pTempController = Cast<AServerPlayerController_Base>(GetController());
+		if (pTempController)
+		{
+			UPlayerInfo_Base* PlayerInfoWidget = pTempController->GetMainHUD()->GetPlayerInfoWidget();
+			
+			if(CurrentHealth <=0) PlayerInfoWidget->SetHPBarRatio(0.f);
+			else PlayerInfoWidget->SetHPBarRatio(CurrentHealth / MaxHealth);
+		}
+
+
 		FString healthMessage = FString::Printf(TEXT("You now have %f health remaining."), CurrentHealth);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
 
@@ -119,6 +129,8 @@ void ACharacter_Base::OnHealthUpdate()
 			FString deathMessage = FString::Printf(TEXT("You have been killed."));
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
 		}
+
+
 	}
 
 	//서버 전용 함수 기능
