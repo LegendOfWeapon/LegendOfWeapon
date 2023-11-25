@@ -3,6 +3,11 @@
 #include "Character_Base.h"
 #include "../Header/global.h"
 
+#include "../GameMode/ServerPlayerController_Base.h"
+#include "../ui/MainHUD_Base.h"
+#include "../ui/PlayerInfo_Base.h"
+
+
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "../LegendOfWeapon.h"
@@ -51,7 +56,16 @@ void ACharacter_Base::BeginPlay()
 			pSubsystem->AddMappingContext(InputMapping.LoadSynchronous(), 0);
 		}
 	}	
-	
+
+	// HUD 체력 설정
+	AServerPlayerController_Base* pTempController = Cast<AServerPlayerController_Base>(GetController());
+	if (pTempController && pTempController->IsLocalController())
+	{
+		UPlayerInfo_Base* PlayerInfoWidget = pTempController->GetMainHUD()->GetPlayerInfoWidget();
+		PlayerInfoWidget->SetName(TEXT("ReSnow"));
+		PlayerInfoWidget->SetHPBarRatio(1.f);
+	}
+
 	// 충돌 시 호출할 함수 바인딩
 	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ACharacter_Base::OnHit);
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACharacter_Base::BeginOverlap);
@@ -96,6 +110,17 @@ void ACharacter_Base::OnHealthUpdate()
 	//클라이언트 전용 함수 기능
 	if (IsLocallyControlled())
 	{
+		// HUD 체력 설정
+		AServerPlayerController_Base* pTempController = Cast<AServerPlayerController_Base>(GetController());
+		if (pTempController)
+		{
+			UPlayerInfo_Base* PlayerInfoWidget = pTempController->GetMainHUD()->GetPlayerInfoWidget();
+			
+			if(CurrentHealth <=0) PlayerInfoWidget->SetHPBarRatio(0.f);
+			else PlayerInfoWidget->SetHPBarRatio(CurrentHealth / MaxHealth);
+		}
+
+
 		FString healthMessage = FString::Printf(TEXT("You now have %f health remaining."), CurrentHealth);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
 
@@ -104,6 +129,8 @@ void ACharacter_Base::OnHealthUpdate()
 			FString deathMessage = FString::Printf(TEXT("You have been killed."));
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
 		}
+
+
 	}
 
 	//서버 전용 함수 기능

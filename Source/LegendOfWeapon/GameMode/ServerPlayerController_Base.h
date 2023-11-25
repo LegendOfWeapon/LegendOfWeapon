@@ -13,7 +13,16 @@ UCLASS()
 class LEGENDOFWEAPON_API AServerPlayerController_Base : public APlayerController
 {
 	GENERATED_BODY()
-	
+
+
+private:
+	TSubclassOf<UUserWidget>	m_MainHudClass;
+	class UMainHUD_Base*		m_MainHUD;
+
+
+public:
+	class UMainHUD_Base* GetMainHUD() { return m_MainHUD; }
+
 public:
 	AServerPlayerController_Base();
 
