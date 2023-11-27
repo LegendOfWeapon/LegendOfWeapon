@@ -19,17 +19,31 @@ void ALongswordCharacter_Base::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ALongswordCharacter_Base::LightAttack(const FInputActionInstance& _Instance)
+void ALongswordCharacter_Base::LightAttackTriggered(const FInputActionInstance& _Instance)
 {	
 	// 해당 액션시 수행해야 할 코드 작성
-	UE_LOG(LogTemp, Warning, TEXT("Longsword Character LightAttack"));
+	UE_LOG(LogTemp, Warning, TEXT("Longsword Character LightAttack Triggered"));
 }
 
-void ALongswordCharacter_Base::MiddleAttack(const FInputActionInstance& _Instance)
+void ALongswordCharacter_Base::LightAttackCanceled(const FInputActionInstance& _Instance)
+{
+	// 해당 액션시 수행해야 할 코드 작성
+	UE_LOG(LogTemp, Warning, TEXT("Longsword Character LightAttack Canceled"));
+}
+
+void ALongswordCharacter_Base::MiddleAttackTriggered(const FInputActionInstance& _Instance)
 {
 }
 
-void ALongswordCharacter_Base::HeavyAttack(const FInputActionInstance& _Instance)
+void ALongswordCharacter_Base::MiddleAttackCanceled(const FInputActionInstance& _Instance)
+{
+}
+
+void ALongswordCharacter_Base::HeavyAttackTriggered(const FInputActionInstance& _Instance)
+{
+}
+
+void ALongswordCharacter_Base::HeavyAttackCanceled(const FInputActionInstance& _Instance)
 {
 }
 

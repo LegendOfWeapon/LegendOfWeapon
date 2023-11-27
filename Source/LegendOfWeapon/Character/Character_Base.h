@@ -3,6 +3,8 @@
 #pragma once
 
 #include "../Header/global.h"
+#include "../Private/Interface_AnimInstances.h"
+#include "../Private/Interface_PlayMontages.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -15,6 +17,8 @@
 
 #include "CoreMinimal.h"
 #include "Character_Base.generated.h"
+
+
 
 UCLASS()
 class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter
@@ -62,8 +66,12 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TSoftObjectPtr<UIADataAsset>			InputActionSetting;
 
+
+
 public:
 	TSoftObjectPtr<UAnimMontage> GetDefaultMontage() { return DefaultMontage; }
+
+
 
 public:
 	// Sets default values for this character's properties
@@ -118,10 +126,21 @@ protected:
 	void Move(const FInputActionInstance& _Instance);
 
 	UFUNCTION()
-	virtual void LightAttack(const FInputActionInstance& _Instance);
-         
-	virtual void MiddleAttack(const FInputActionInstance& _Instance);		 
-	virtual void HeavyAttack(const FInputActionInstance& _Instance);		  
+	virtual void LightAttackTriggered(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void LightAttackCanceled(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void MiddleAttackTriggered(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void MiddleAttackCanceled(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void HeavyAttackTriggered(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void HeavyAttackCanceled(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void BlockTriggered(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void BlockCompleted(const FInputActionInstance& _Instance);
 
 	// 충돌 관련 Delegate
 	UFUNCTION()

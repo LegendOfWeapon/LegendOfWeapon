@@ -7,6 +7,7 @@ enum class EInputActionType : uint8
 	LIGHT_ATTACK,
 	MIDDLE_ATTACK,
 	HEAVY_ATTACK,
+	BLOCK,
 };
 
 UENUM(BlueprintType)
