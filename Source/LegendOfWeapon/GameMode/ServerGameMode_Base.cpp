@@ -79,7 +79,7 @@ void AServerGameMode_Base::PostLogin(APlayerController* newPlayer)
 
 	if (PlayerInfoList.Num() == 2) {
 		UE_LOG(LogTemp, Warning, TEXT("StartPlaying"));
-		PlayerCharacterPossesing(EWeaponType::LONGSWORD, EWeaponType::SPEAR);
+		PlayerCharacterPossesing(EWeaponType::SPEAR, EWeaponType::LONGSWORD);
 	}
 }
 
