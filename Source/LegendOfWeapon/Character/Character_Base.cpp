@@ -175,17 +175,24 @@ void ACharacter_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 				break;
 
 			case EInputActionType::LIGHT_ATTACK:
-				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::LightAttack);
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::LightAttackTriggered);
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Canceled, this, &ACharacter_Base::LightAttackCanceled);
 				break;
 
 			case EInputActionType::MIDDLE_ATTACK:
-				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::MiddleAttack);
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::MiddleAttackTriggered);
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Canceled, this, &ACharacter_Base::MiddleAttackCanceled);
 				break;
 
 			case EInputActionType::HEAVY_ATTACK:
-				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::HeavyAttack);
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::HeavyAttackTriggered);
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Canceled, this, &ACharacter_Base::HeavyAttackCanceled);
 				break;
 
+			case EInputActionType::BLOCK:
+					InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::BlockTriggered);
+					InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Completed, this, &ACharacter_Base::BlockCompleted);
+					break;
 
 			}
 		}
@@ -232,9 +239,26 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		GetCharacterMovement()->AddInputVector(GetActorRightVector() * vInput.Y);
 }
 
-void ACharacter_Base::LightAttack(const FInputActionInstance& _Instance)
+void ACharacter_Base::LightAttackTriggered(const FInputActionInstance& _Instance)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Spear Character LightAttack"));
+	UE_LOG(LogTemp, Warning, TEXT("Character LightAttack Triggered"));
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Anim Instance is not null!"));
+		//Execute SendCharacterState
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("interface implemented"));
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Attacking);
+		}
+		if (AnimInstance->Implements<UInterface_PlayMontages>())
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("interface implemented"));
+			IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::LightAttack);
+		}
+	}
 
 	//if (!IsLightAttack) // 기본공격
 	//{
@@ -254,12 +278,100 @@ void ACharacter_Base::LightAttack(const FInputActionInstance& _Instance)
 	//}
 }
 
-void ACharacter_Base::MiddleAttack(const FInputActionInstance& _Instance)
+void ACharacter_Base::LightAttackCanceled(const FInputActionInstance& _Instance)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Character LightAttack Canceled"));
+	//send attack type and character state
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
+		}
+	}
 }
 
-void ACharacter_Base::HeavyAttack(const FInputActionInstance& _Instance)
+void ACharacter_Base::MiddleAttackTriggered(const FInputActionInstance& _Instance)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Character MiddleAttack triggered"));
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Attacking);
+		}
+		if (AnimInstance->Implements<UInterface_PlayMontages>())
+		{
+			IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::MiddleAttack);
+		}
+	}
+}
+
+void ACharacter_Base::MiddleAttackCanceled(const FInputActionInstance& _Instance)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
+		}
+	}
+}
+
+void ACharacter_Base::HeavyAttackTriggered(const FInputActionInstance& _Instance)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Character HeavyAttack triggered"));
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Attacking);
+		}
+		if (AnimInstance->Implements<UInterface_PlayMontages>())
+		{
+			IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::HeavyAttack);
+		}
+	}
+}
+
+void ACharacter_Base::HeavyAttackCanceled(const FInputActionInstance& _Instance)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
+		}
+	}
+}
+
+void ACharacter_Base::BlockTriggered(const FInputActionInstance& _Instance)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Blocking);
+		}
+	}
+}
+
+void ACharacter_Base::BlockCompleted(const FInputActionInstance& _Instance)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
+		}
+	}
 }
 
 
@@ -308,3 +420,4 @@ void ACharacter_Base::BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _
 void ACharacter_Base::EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index)
 {
 }
+

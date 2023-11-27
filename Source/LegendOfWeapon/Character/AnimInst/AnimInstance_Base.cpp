@@ -22,3 +22,16 @@ void UAnimInstance_Base::NativeUpdateAnimation(float _fDeltaTime)
 	if (!IsValid(Character) || !IsValid(Movement))
 		return;
 }
+
+//void UAnimInstance_Base::SendCharacterState_Implementation(ECharacterState _State)
+//{
+//	CharacterStates = _State;
+//	UE_LOG(LogTemp, Warning, TEXT("Current State is ??"));
+//}
+//
+//void UAnimInstance_Base::SendAttackTypes_Implementation(EAttackTypes _Attack)
+//{
+//	AttackTypes = _Attack;
+//}
+
+

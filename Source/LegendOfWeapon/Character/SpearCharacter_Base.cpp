@@ -27,20 +27,50 @@ void ASpearCharacter_Base::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ASpearCharacter_Base::LightAttack(const FInputActionInstance& _Instance)
+void ASpearCharacter_Base::LightAttackTriggered(const FInputActionInstance& _Instance)
 {
-	//Super::LightAttack(_Instance);
+	Super::LightAttackTriggered(_Instance);
 
 	//// 해당 액션시 수행해야 할 코드 작성
-	//UE_LOG(LogTemp, Warning, TEXT("Spear Character LightAttack"));
+	UE_LOG(LogTemp, Warning, TEXT("Spear Character LightAttack Triggered inheritied"));
 }
 
-void ASpearCharacter_Base::MiddleAttack(const FInputActionInstance& _Instance)
+void ASpearCharacter_Base::LightAttackCanceled(const FInputActionInstance& _Instance)
 {
+	Super::LightAttackCanceled(_Instance);
+
+	//// 해당 액션시 수행해야 할 코드 작성
+	UE_LOG(LogTemp, Warning, TEXT("Spear Character LightAttack Canceled"));
 }
 
-void ASpearCharacter_Base::HeavyAttack(const FInputActionInstance& _Instance)
+void ASpearCharacter_Base::MiddleAttackTriggered(const FInputActionInstance& _Instance)
 {
+	Super::MiddleAttackTriggered(_Instance);
+}
+
+void ASpearCharacter_Base::MiddleAttackCanceled(const FInputActionInstance& _Instance)
+{
+	Super::MiddleAttackCanceled(_Instance);
+}
+
+void ASpearCharacter_Base::HeavyAttackTriggered(const FInputActionInstance& _Instance)
+{
+	Super::HeavyAttackTriggered(_Instance);
+}
+
+void ASpearCharacter_Base::HeavyAttackCanceled(const FInputActionInstance& _Instance)
+{
+	Super::HeavyAttackCanceled(_Instance);
+}
+
+void ASpearCharacter_Base::BlockTriggered(const FInputActionInstance& _Instance)
+{
+	Super::BlockTriggered(_Instance);
+}
+
+void ASpearCharacter_Base::BlockCompleted(const FInputActionInstance& _Instance)
+{
+	Super::BlockCompleted(_Instance);
 }
 
 void ASpearCharacter_Base::OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, FVector _vNormalImpulse, const FHitResult& _Hit)

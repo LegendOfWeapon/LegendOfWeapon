@@ -28,9 +28,12 @@ public:
 	ALongswordCharacter_Base();
 
 private:
-	virtual void LightAttack(const FInputActionInstance& _Instance) override;
-	virtual void MiddleAttack(const FInputActionInstance& _Instance) override;
-	virtual void HeavyAttack(const FInputActionInstance& _Instance)override;
+	virtual void LightAttackTriggered(const FInputActionInstance& _Instance) override;
+	virtual void LightAttackCanceled(const FInputActionInstance& _Instance) override;
+	virtual void MiddleAttackTriggered(const FInputActionInstance& _Instance) override;
+	virtual void MiddleAttackCanceled(const FInputActionInstance& _Instance) override;
+	virtual void HeavyAttackTriggered(const FInputActionInstance& _Instance)override;
+	virtual void HeavyAttackCanceled(const FInputActionInstance& _Instance)override;
 
 	// 충돌 관련 Delegate
 	virtual void OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
