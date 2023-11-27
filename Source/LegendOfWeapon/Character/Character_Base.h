@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
 
@@ -16,6 +17,8 @@
 #include "CoreMinimal.h"
 #include "Character_Base.generated.h"
 
+class AWeapon_Base;
+
 UCLASS()
 class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter
 {
@@ -23,18 +26,22 @@ class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
-	UCameraComponent* m_Cam;
+	UCameraComponent*						m_Cam;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
-	USpringArmComponent* m_Arm;
+	USpringArmComponent*					m_Arm;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool IsLightAttack;
+	TSubclassOf<AWeapon_Base>				m_Weapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool									IsLightAttack;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
-	ECharacterState CharacterStates;
+	ECharacterState							CharacterStates;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
-	EAttackTypes AttackTypes;
+	EAttackTypes							AttackTypes;
 
 	int32 ComboCount = 0;
 	bool  bCanCombo  = false;

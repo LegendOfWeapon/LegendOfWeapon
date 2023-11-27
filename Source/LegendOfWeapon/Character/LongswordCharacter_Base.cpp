@@ -2,16 +2,39 @@
 
 
 #include "LongswordCharacter_Base.h"
+#include "../Weapon/Weapon_Base.h"
 
 ALongswordCharacter_Base::ALongswordCharacter_Base()
 {	
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// 무기 창(BPC_Longsword)을 찾아서 참조한다. 
+	ConstructorHelpers::FClassFinder<AWeapon_Base> weapon(TEXT("/Script/Engine.Blueprint'/Game/BluePrints/Weapon/BPC_Longsword.BPC_Longsword_C'"));
+	if (weapon.Succeeded())
+	{
+		m_Weapon = weapon.Class;
+	}
 }
 
 void ALongswordCharacter_Base::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 무기 롱소드 생성
+	FActorSpawnParameters param;
+	param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	param.OverrideLevel = GetLevel();
+	param.bDeferConstruction = false;
+	param.Owner = this;
+
+	FTransform WeaponSocketTransform = GetMesh()->GetSocketTransform(TEXT("Hand_RSocket"), RTS_World);
+	AWeapon_Base* pWeapon = GetWorld()->SpawnActor<AWeapon_Base>(m_Weapon, WeaponSocketTransform, param);
+
+	// 플레이어에게 롱소드 장착
+	FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
+	pWeapon->AttachToComponent(GetMesh(), AttachRules, TEXT("Hand_RSocket"));
+	pWeapon->m_pOwner = this;
 }
 
 void ALongswordCharacter_Base::Tick(float DeltaTime)

@@ -2,6 +2,7 @@
 
 #include "SpearCharacter_Base.h"
 
+#include "../Weapon/Weapon_Base.h"
 #include "Character_Base.h"
 
 ASpearCharacter_Base::ASpearCharacter_Base()
@@ -15,11 +16,34 @@ ASpearCharacter_Base::ASpearCharacter_Base()
 	{
 		DefaultMontage = montage.Object;
 	}
+
+	// 무기 창(BPC_Spear)을 찾아서 참조한다. 
+	ConstructorHelpers::FClassFinder<AWeapon_Base> weapon(TEXT("/Script/Engine.Blueprint'/Game/BluePrints/Weapon/BPC_Spear.BPC_Spear_C'"));
+	if (weapon.Succeeded())
+	{
+		m_Weapon = weapon.Class;
+	}
+
 }
 
 void ASpearCharacter_Base::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 무기 창 생성
+	FActorSpawnParameters param;
+	param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	param.OverrideLevel = GetLevel();
+	param.bDeferConstruction = false;
+	param.Owner = this;
+
+	FTransform WeaponSocketTransform =  GetMesh()->GetSocketTransform(TEXT("ik_hand_gunSocket"), RTS_World);
+	AWeapon_Base* pWeapon = GetWorld()->SpawnActor<AWeapon_Base>(m_Weapon, WeaponSocketTransform, param);
+
+	// 플레이어에게 창 장착
+	FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
+	pWeapon->AttachToComponent(GetMesh(), AttachRules, TEXT("ik_hand_gunSocket"));
+	pWeapon->m_pOwner = this;
 }
 
 void ASpearCharacter_Base::Tick(float DeltaTime)
