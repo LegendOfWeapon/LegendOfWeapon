@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SpearCharacter_Base.h"
-
-#include "Character_Base.h"
+#include "../Weapon/Weapon_Base.h"
 
 ASpearCharacter_Base::ASpearCharacter_Base()
 {
@@ -20,6 +19,24 @@ ASpearCharacter_Base::ASpearCharacter_Base()
 void ASpearCharacter_Base::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 무기 창 생성
+	FActorSpawnParameters param;
+	param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	param.OverrideLevel = GetLevel();
+	param.bDeferConstruction = false;
+	param.Owner = this;
+
+	FTransform WeaponSocketTransform = GetMesh()->GetSocketTransform(TEXT("ik_hand_gunSocket"), RTS_World);
+	AWeapon_Base* pWeapon = GetWorld()->SpawnActor<AWeapon_Base>(m_Weapon, WeaponSocketTransform, param);
+
+	if (pWeapon)
+	{
+		// 플레이어에게 창 장착
+		FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
+		pWeapon->AttachToComponent(GetMesh(), AttachRules, TEXT("ik_hand_gunSocket"));
+		pWeapon->m_pOwner = this;
+	}
 }
 
 void ASpearCharacter_Base::Tick(float DeltaTime)

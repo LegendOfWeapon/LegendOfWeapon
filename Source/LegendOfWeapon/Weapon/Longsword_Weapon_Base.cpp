@@ -9,10 +9,12 @@ ALongsword_Weapon_Base::ALongsword_Weapon_Base()
 
 void ALongsword_Weapon_Base::BeginPlay()
 {
+	Super::BeginPlay();
 }
 
 void ALongsword_Weapon_Base::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
 }
 
 

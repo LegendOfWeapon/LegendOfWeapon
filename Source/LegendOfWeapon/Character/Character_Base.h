@@ -18,7 +18,7 @@
 #include "CoreMinimal.h"
 #include "Character_Base.generated.h"
 
-
+class AWeapon_Base;
 
 UCLASS()
 class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter
@@ -27,21 +27,26 @@ class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
-	UCameraComponent* m_Cam;
+	UCameraComponent*				m_Cam;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
-	USpringArmComponent* m_Arm;
+	USpringArmComponent*			m_Arm;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool IsLightAttack;
+	TSubclassOf<AWeapon_Base>		m_Weapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool IsAttacking;
+	bool							IsLightAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool							IsAttacking;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
-	ECharacterState CharacterStates;
+	ECharacterState					CharacterStates;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
-	EAttackTypes AttackTypes;
+	EAttackTypes					AttackTypes;
+
 
 	bool bIsWPressed = false;
 	bool bIsSPressed = false;
@@ -53,14 +58,14 @@ public:
 
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
-	TSoftObjectPtr<UAnimMontage>			DefaultMontage; // attack combo montage
+	TSoftObjectPtr<UAnimMontage>	DefaultMontage; // attack combo montage
 
 protected:
-	/** ÇÃ·¹ÀÌ¾îÀÇ ÃÖ´ë Ã¼·Â. Ã¼·ÂÀÇ ÃÖ´ñ°ªÀÔ´Ï´Ù. ÀÌ °ªÀº ½ºÆù ½Ã ½ÃÀÛµÇ´Â Ä³¸¯ÅÍÀÇ Ã¼·Â °ªÀÔ´Ï´Ù.*/
+	/** ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½. Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½Ô´Ï´ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ÛµÇ´ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Ô´Ï´ï¿½.*/
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
 		float MaxHealth;
 
-	/** ÇÃ·¹ÀÌ¾îÀÇ ÇöÀç Ã¼·Â. 0ÀÌ µÇ¸é Á×Àº °ÍÀ¸·Î °£ÁÖµË´Ï´Ù.*/
+	/** ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½. 0ï¿½ï¿½ ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÖµË´Ï´ï¿½.*/
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
 		float CurrentHealth;
 
@@ -82,7 +87,7 @@ public:
 	// Sets default values for this character's properties
 	ACharacter_Base();
 
-	/** ÇÁ·ÎÆÛÆ¼ ¸®ÇÃ¸®ÄÉÀÌ¼Ç */
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ */
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
@@ -90,11 +95,11 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
 
-	/** ÇöÀç Ã¼·Â¿¡ °¡ÇØÁø º¯°æ¿¡ ´ëÇÑ RepNotify*/
+	/** ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½æ¿¡ ï¿½ï¿½ï¿½ï¿½ RepNotify*/
 	UFUNCTION()
 	void OnRep_CurrentHealth();	
 
-	/** ¾÷µ¥ÀÌÆ®µÇ´Â Ã¼·Â¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ*/
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ç´ï¿½ Ã¼ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È£ï¿½ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RepNotifyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ È£ï¿½ï¿½*/
 	void OnHealthUpdate();
 
 public:	
@@ -104,26 +109,26 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/** ÇöÀç Ã¼·Â ¼¼ÅÍ. °ªÀ» 0°ú MaxHealth »çÀÌ·Î ¹üÀ§Á¦ÇÑÇÏ°í OnHealthUpdate¸¦ È£ÃâÇÕ´Ï´Ù. ¼­¹ö¿¡¼­¸¸ È£ÃâµÇ¾î¾ß ÇÕ´Ï´Ù.*/
+	/** ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ MaxHealth ï¿½ï¿½ï¿½Ì·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ OnHealthUpdateï¿½ï¿½ È£ï¿½ï¿½ï¿½Õ´Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½Ç¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½.*/
 	UFUNCTION(BlueprintCallable, Category = "Health")
 		void SetCurrentHealth(float healthValue);
 
-	/** ´ë¹ÌÁö¸¦ ¹Þ´Â ÀÌº¥Æ®. APawn¿¡¼­ ¿À¹ö¶óÀÌµåµË´Ï´Ù.*/
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´ï¿½ ï¿½Ìºï¿½Æ®. APawnï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½Ë´Ï´ï¿½.*/
 	UFUNCTION(BlueprintCallable, Category = "Health")
 		float TakeDamage(float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public://Get(),Set() Collection
-	/** ÃÖ´ë Ã¼·Â °ÔÅÍ*/
+	/** ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	UFUNCTION(BlueprintPure, Category = "Health")
 		FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 
-	/** ÇöÀç Ã¼·Â °ÔÅÍ*/
+	/** ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	UFUNCTION(BlueprintPure, Category = "Health")
 		FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
 
 private:	
 	FTimerHandle ComboTimerHandle;
-	const float ComboWindowTime = 0.5f; // ÄÞº¸°ø°Ý ÀÔ·Â °¡´É½Ã°£ 
+	const float ComboWindowTime = 0.5f; // ï¿½Þºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½É½Ã°ï¿½ 
 	void ComboAttack();
 	void ResetCombo();
 protected:
@@ -147,7 +152,7 @@ protected:
 	UFUNCTION()
 	virtual void BlockCompleted(const FInputActionInstance& _Instance);
 
-	// Ãæµ¹ °ü·Ã Delegate
+	// ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ Delegate
 	UFUNCTION()
 	virtual void OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
 		, FVector  _vNormalImpulse, const FHitResult& _Hit);

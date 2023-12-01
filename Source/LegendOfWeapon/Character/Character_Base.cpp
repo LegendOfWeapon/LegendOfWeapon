@@ -34,7 +34,7 @@ void ACharacter_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//ÇöÀç Ã¼·Â ¸®ÇÃ¸®ÄÉÀÌÆ®
+	//ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	DOREPLIFETIME(ACharacter_Base, CurrentHealth);
 }
 
@@ -51,13 +51,13 @@ void ACharacter_Base::BeginPlay()
 
 		if (pLocalPlayer && !InputMapping.IsNull())
 		{
-			// LocalPlayerÀÇ EnhancedInput ½Ã½ºÅÛÀ» ¾ò¾î¼­, »ç¿ëÇÒ IMC¸¦ ¼¼ÆÃ
+			// LocalPlayerï¿½ï¿½ EnhancedInput ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î¼­, ï¿½ï¿½ï¿½ï¿½ï¿½ IMCï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			UEnhancedInputLocalPlayerSubsystem* pSubsystem = pLocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 			pSubsystem->AddMappingContext(InputMapping.LoadSynchronous(), 0);
 		}
 	}	
 
-	// HUD Ã¼·Â ¼³Á¤
+	// HUD Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	AServerPlayerController_Base* pTempController = Cast<AServerPlayerController_Base>(GetController());
 	if (pTempController && pTempController->IsLocalController())
 	{
@@ -66,7 +66,7 @@ void ACharacter_Base::BeginPlay()
 		PlayerInfoWidget->SetHPBarRatio(1.f);
 	}
 
-	// Ãæµ¹ ½Ã È£ÃâÇÒ ÇÔ¼ö ¹ÙÀÎµù
+	// ï¿½æµ¹ ï¿½ï¿½ È£ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½Îµï¿½
 	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ACharacter_Base::OnHit);
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACharacter_Base::BeginOverlap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACharacter_Base::EndOverlap);
@@ -107,10 +107,10 @@ void ACharacter_Base::OnRep_CurrentHealth()
 
 void ACharacter_Base::OnHealthUpdate()
 {
-	//Å¬¶óÀÌ¾ðÆ® Àü¿ë ÇÔ¼ö ±â´É
+	//Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½
 	if (IsLocallyControlled())
 	{
-		// HUD Ã¼·Â ¼³Á¤
+		// HUD Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		AServerPlayerController_Base* pTempController = Cast<AServerPlayerController_Base>(GetController());
 		if (pTempController)
 		{
@@ -133,7 +133,7 @@ void ACharacter_Base::OnHealthUpdate()
 
 	}
 
-	//¼­¹ö Àü¿ë ÇÔ¼ö ±â´É
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		FString healthMessage = FString::Printf(TEXT("%s now has %f health remaining."), *GetFName().ToString(), CurrentHealth);
@@ -156,7 +156,7 @@ void ACharacter_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// InputComponent -> EnhancedInputComponent ·Î ´Ù¿îÄ³½ºÆÃ
+	// InputComponent -> EnhancedInputComponent ï¿½ï¿½ ï¿½Ù¿ï¿½Ä³ï¿½ï¿½ï¿½ï¿½
 	UEnhancedInputComponent* InputCom = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
 	if (nullptr == InputCom) return;
@@ -344,15 +344,15 @@ void ACharacter_Base::LightAttackTriggered(const FInputActionInstance& _Instance
 		}
 	}
 
-	//if (!IsLightAttack) // ±âº»°ø°Ý
+	//if (!IsLightAttack) // ï¿½âº»ï¿½ï¿½ï¿½ï¿½
 	//{
 	//	IsLightAttack = true;
-	//	bCanCombo = true;  // ³ªÁß¿¡ ³ëÆ¼ÆÄÀÌ·Î ÄÞº¸ °¡´É ½Ã°£À¸·Î »©±â
+	//	bCanCombo = true;  // ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½Ì·ï¿½ ï¿½Þºï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	//	
-	//	// ÄÞº¸ °ø°ÝÀ» ÀÌÀ» ¼ö ÀÖ´Â ½Ã°£ ¼³Á¤ (0.5)
+	//	// ï¿½Þºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ (0.5)
 	//	GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &ACharacter_Base::ResetCombo, ComboWindowTime, false);
 
-	//	// ±âº» °ø°Ý ¸ùÅ¸ÁÖ Àç»ý (Ã¹ ¹øÂ° °ø°Ý ¾Ö´Ï¸ÞÀÌ¼Ç - 'LightAttack' ¼½¼Ç)
+	//	// ï¿½âº» ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ (Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ - 'LightAttack' ï¿½ï¿½ï¿½ï¿½)
 	//	GetMesh()->GetAnimInstance()->Montage_Play(DefaultMontage.LoadSynchronous(), 1.0f);
 	//	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("LightAttack"), DefaultMontage.LoadSynchronous());
 	//}
@@ -461,37 +461,37 @@ void ACharacter_Base::BlockCompleted(const FInputActionInstance& _Instance)
 
 //void ACharacter_Base::ComboAttack()
 //{
-//	// ÄÞº¸ Ä«¿îÆ®¸¦ ±â¹ÝÀ¸·Î ÄÞº¸ °ø°Ý ÁøÇà
+//	// ï¿½Þºï¿½ Ä«ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þºï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //	ComboCount++;
 //	if (ComboCount == 1)
-//	{		// µÎ ¹øÂ° °ø°Ý ¾Ö´Ï¸ÞÀÌ¼ÇÀ¸·Î ¼¼ÆÃ
+//	{		// ï¿½ï¿½ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //		GetMesh()->GetAnimInstance()->Montage_SetNextSection(FName("LightAttack"), FName("MiddleAttack"), DefaultMontage.LoadSynchronous());
 //
 //	}
 //	else if (ComboCount == 2)
 //	{		
-//		// ¼¼ ¹øÂ° °ø°Ý ¾Ö´Ï¸ÞÀÌ¼ÇÀ¸·Î ¼¼ÆÃ
+//		// ï¿½ï¿½ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //		GetMesh()->GetAnimInstance()->Montage_SetNextSection(FName("MiddleAttack"), FName("HeavyAttack"), DefaultMontage.LoadSynchronous());
 //
-//		// ÄÞº¸ ³¡, ¸®¼Â
+//		// ï¿½Þºï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½
 //		bCanCombo = false;
 //	}
 //
-//	// ÄÞº¸°¡ °è¼ÓµÉ ¼ö ÀÖµµ·Ï À©µµ¿ì Å¸ÀÌ¸Ó Àç¼³Á¤ (0.5ÃÊ)
+//	// ï¿½Þºï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½ç¼³ï¿½ï¿½ (0.5ï¿½ï¿½)
 //	GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &ACharacter_Base::ResetCombo, ComboWindowTime, false);
 //}
 
 void ACharacter_Base::ResetCombo()
 {
 	bCanCombo = false;
-	// ÄÞº¸ Å¸ÀÌ¸Ó Ãë¼Ò
+	// ï¿½Þºï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½
 	GetWorld()->GetTimerManager().ClearTimer(ComboTimerHandle);
 }
 
 
 
 // ===============
-// Ãæµ¹ ÀÌº¥Æ® ÇÔ¼ö
+// ï¿½æµ¹ ï¿½Ìºï¿½Æ® ï¿½Ô¼ï¿½
 // ===============
 void ACharacter_Base::OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, FVector _vNormalImpulse, const FHitResult& _Hit)
 {
