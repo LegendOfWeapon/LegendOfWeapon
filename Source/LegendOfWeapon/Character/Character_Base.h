@@ -3,10 +3,11 @@
 #pragma once
 
 #include "../Header/global.h"
+#include "../Private/Interface_AnimInstances.h"
+#include "../Private/Interface_PlayMontages.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
 
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
@@ -17,7 +18,7 @@
 #include "CoreMinimal.h"
 #include "Character_Base.generated.h"
 
-class AWeapon_Base;
+
 
 UCLASS()
 class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter
@@ -26,22 +27,21 @@ class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
-	UCameraComponent*						m_Cam;
+	UCameraComponent* m_Cam;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
-	USpringArmComponent*					m_Arm;
+	USpringArmComponent* m_Arm;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	TSubclassOf<AWeapon_Base>				m_Weapon;
+	bool IsLightAttack;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool									IsLightAttack;
+	bool IsAttacking;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
-	ECharacterState							CharacterStates;
-
+	ECharacterState CharacterStates;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
-	EAttackTypes							AttackTypes;
+	EAttackTypes AttackTypes;
 
 	int32 ComboCount = 0;
 	bool  bCanCombo  = false;
@@ -66,8 +66,12 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TSoftObjectPtr<UIADataAsset>			InputActionSetting;
 
+
+
 public:
 	TSoftObjectPtr<UAnimMontage> GetDefaultMontage() { return DefaultMontage; }
+
+
 
 public:
 	// Sets default values for this character's properties
@@ -122,10 +126,21 @@ protected:
 	void Move(const FInputActionInstance& _Instance);
 
 	UFUNCTION()
-	virtual void LightAttack(const FInputActionInstance& _Instance);
-         
-	virtual void MiddleAttack(const FInputActionInstance& _Instance);		 
-	virtual void HeavyAttack(const FInputActionInstance& _Instance);		  
+	virtual void LightAttackTriggered(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void LightAttackCanceled(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void MiddleAttackTriggered(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void MiddleAttackCanceled(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void HeavyAttackTriggered(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void HeavyAttackCanceled(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void BlockTriggered(const FInputActionInstance& _Instance);
+	UFUNCTION()
+	virtual void BlockCompleted(const FInputActionInstance& _Instance);
 
 	// 충돌 관련 Delegate
 	UFUNCTION()
