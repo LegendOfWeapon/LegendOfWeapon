@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StarterGameMode_Base.h"
+#include "GlobalDefaultServerGameMode.h"
 
 #include "../LegendOfWeapon.h"
 
-AStarterGameMode_Base::AStarterGameMode_Base()
+AGlobalDefaultServerGameMode::AGlobalDefaultServerGameMode()
 {
 	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassRef(TEXT("/Script/CoreUObject.Class'/Script/LegendOfWeapon.MyPlayerController'"));
 	if (PlayerControllerClassRef.Class)
@@ -14,35 +14,35 @@ AStarterGameMode_Base::AStarterGameMode_Base()
 	}
 }
 
-void AStarterGameMode_Base::BeginPlay()
+void AGlobalDefaultServerGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void AStarterGameMode_Base::Tick(float DeltaTime)
+void AGlobalDefaultServerGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AStarterGameMode_Base::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
+void AGlobalDefaultServerGameMode::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
 {
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 }
 
-APlayerController* AStarterGameMode_Base::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
+APlayerController* AGlobalDefaultServerGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
 {
 	APlayerController* playerController = Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
 	return playerController;
 }
 
-void AStarterGameMode_Base::PostLogin(APlayerController* newPlayer)
+void AGlobalDefaultServerGameMode::PostLogin(APlayerController* newPlayer)
 {
 	AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Begin"), *GetName());
 	Super::PostLogin(newPlayer);
 	AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("End"), *GetName());
 }
 
-void AStarterGameMode_Base::StartPlay()
+void AGlobalDefaultServerGameMode::StartPlay()
 {
 	Super::StartPlay();
 }

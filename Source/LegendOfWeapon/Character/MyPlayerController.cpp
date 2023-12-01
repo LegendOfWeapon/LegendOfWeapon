@@ -4,6 +4,7 @@
 #include "MyPlayerController.h"
 
 #include "../LegendOfWeapon.h"
+#include "../GameMode/StarterGameMode_Base.h"
 
 
 AMyPlayerController::AMyPlayerController()
@@ -32,7 +33,16 @@ void AMyPlayerController::ServerOpenLevel_Implementation()
 	if (GetLocalRole() == ROLE_Authority) {
 		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("Server"));
 		//UGameplayStatics::OpenLevel(GetWorld(), TEXT("ServerTestMap"));
+		
 		//this->ClientTravel(TEXT("ServerTestMap"), ETravelType::TRAVEL_Absolute);
+
+		//FString NewLevelName = "/Game/Maps/ServerTestMap";
+		//FString GameModeName = "ServerGameMode_Base";
+		//
+		//FString TravelURL = FString::Printf(TEXT("%s?game=%s"), *NewLevelName, *GameModeName);
+		//this->PreClientTravel(TravelURL, ETravelType::TRAVEL_Absolute, true);
+		//this->ClientRestart(nullptr);
+		
 		GetWorld()->ServerTravel(TEXT("ServerTestMap"));
 	}
 }
