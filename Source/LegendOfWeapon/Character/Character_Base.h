@@ -53,6 +53,9 @@ public:
 	bool bIsDPressed = false;
 	bool bIsAPressed = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bool")
+	bool bIsAttacking = false;
+
 	int32 ComboCount = 0;
 	bool  bCanCombo  = false;
 
