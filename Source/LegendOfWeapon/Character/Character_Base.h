@@ -48,10 +48,6 @@ public:
 	EAttackTypes					AttackTypes;
 
 
-	int32 ComboCount = 0;
-	bool  bCanCombo  = false;
-
-
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TSoftObjectPtr<UAnimMontage>	DefaultMontage; // attack combo montage
 
@@ -121,11 +117,6 @@ public://Get(),Set() Collection
 	UFUNCTION(BlueprintPure, Category = "Health")
 		FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
 
-private:	
-	FTimerHandle ComboTimerHandle;
-	const float ComboWindowTime = 0.5f; // 콤보공격 입력 가능시간 
-	void ComboAttack();
-	void ResetCombo();
 protected:
 	// Triggered BindAction
 	void Move(const FInputActionInstance& _Instance);
