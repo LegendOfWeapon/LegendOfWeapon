@@ -145,7 +145,10 @@ void ACharacter_Base::OnHealthUpdate()
 void ACharacter_Base::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	bIsWPressed = false;
+	bIsSPressed = false;
+	bIsAPressed = false;
+	bIsDPressed = false;
 }
 
 // Called to bind functionality to input
@@ -232,6 +235,69 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 	GetActorForwardVector()* vInput.X;
 	GetActorForwardVector()* vInput.Y;
 
+	if (vInput.X > 0.f && vInput.Y == 0.f)
+	{
+		bIsWPressed = true;
+		bIsSPressed = false;
+		bIsAPressed = false;
+		bIsDPressed = false;
+	}
+	else if (vInput.X < 0.f && vInput.Y == 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = true;
+		bIsAPressed = false;
+		bIsDPressed = false;
+	}
+	else if (vInput.X == 0.f && vInput.Y == 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = false;
+		bIsAPressed = false;
+		bIsDPressed = false;
+	}
+	else if (vInput.X == 0.f && vInput.Y > 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = false;
+		bIsAPressed = true;
+		bIsDPressed = false;
+	}
+	else if (vInput.X == 0.f && vInput.Y < 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = false;
+		bIsAPressed = false;
+		bIsDPressed = true;
+	}
+	else if (vInput.X > 0.f && vInput.Y > 0.f)
+	{
+		bIsWPressed = true;
+		bIsSPressed = false;
+		bIsAPressed = true;
+		bIsDPressed = false;
+	}
+	else if (vInput.X > 0.f && vInput.Y < 0.f)
+	{
+		bIsWPressed = true;
+		bIsSPressed = false;
+		bIsAPressed = false;
+		bIsDPressed = true;
+	}
+	else if (vInput.X < 0.f && vInput.Y > 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = true;
+		bIsAPressed = true;
+		bIsDPressed = false;
+	}
+	else if (vInput.X < 0.f && vInput.Y < 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = true;
+		bIsAPressed = false;
+		bIsDPressed = true;
+	}
 
 	if (vInput.X != 0.f)
 		GetCharacterMovement()->AddInputVector(GetActorForwardVector() * vInput.X);
@@ -255,8 +321,26 @@ void ACharacter_Base::LightAttackTriggered(const FInputActionInstance& _Instance
 		}
 		if (AnimInstance->Implements<UInterface_PlayMontages>())
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("interface implemented"));
-			IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::LightAttack);
+			if (bIsWPressed && !bIsAPressed && !bIsDPressed) // only W
+			{
+				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::W_LightAttack);
+			}
+			else if (bIsSPressed && !bIsAPressed && !bIsDPressed) // only S
+			{
+				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::S_LightAttack);
+			}
+			else if (bIsAPressed && !bIsWPressed && !bIsSPressed) // only A
+			{
+				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::A_LightAttack);
+			}
+			else if (bIsDPressed && !bIsWPressed && !bIsSPressed) // only D
+			{
+				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::D_LightAttack);
+			}
+			else // nothing or W + A or W + D or S + A or S + D
+			{
+				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::LightAttack);
+			}
 		}
 	}
 

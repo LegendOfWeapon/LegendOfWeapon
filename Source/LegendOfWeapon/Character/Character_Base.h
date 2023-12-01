@@ -43,6 +43,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
 	EAttackTypes AttackTypes;
 
+	bool bIsWPressed = false;
+	bool bIsSPressed = false;
+	bool bIsDPressed = false;
+	bool bIsAPressed = false;
+
 	int32 ComboCount = 0;
 	bool  bCanCombo  = false;
 
