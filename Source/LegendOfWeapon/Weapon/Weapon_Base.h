@@ -18,7 +18,7 @@ public:
 	AWeapon_Base();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
-	ACharacter_Base* m_pOwner;  //  소유 플레이어
+	class ACharacter_Base* m_pOwner;  //  소유 플레이어
 
 protected:
 	// Called when the game starts or when spawned

@@ -27,6 +27,10 @@ enum class EAttackTypes : uint8
 	LightAttack,
 	MiddleAttack,
 	HeavyAttack,
+	W_LightAttack UMETA(DisplayName = "W Light Attack"),
+	A_LightAttack UMETA(DisplayName = "A Light Attack"),
+	S_LightAttack UMETA(DisplayName = "S Light Attack"),
+	D_LightAttack UMETA(DisplayName = "D Light Attack"),
 };
 
 UENUM(BlueprintType)
