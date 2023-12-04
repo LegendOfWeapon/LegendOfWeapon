@@ -299,9 +299,9 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsDPressed = true;
 	}
 
-	if (vInput.X != 0.f)
+	if (vInput.X != 0.f && !bIsAttacking)
 		GetCharacterMovement()->AddInputVector(GetActorForwardVector() * vInput.X);
-	if (vInput.Y != 0.f)
+	if (vInput.Y != 0.f && !bIsAttacking)
 		GetCharacterMovement()->AddInputVector(GetActorRightVector() * vInput.Y);
 }
 
@@ -437,7 +437,7 @@ void ACharacter_Base::HeavyAttackCanceled(const FInputActionInstance& _Instance)
 void ACharacter_Base::BlockTriggered(const FInputActionInstance& _Instance)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance != nullptr)
+	if (AnimInstance != nullptr && !bIsAttacking)
 	{
 		if (AnimInstance->Implements<UInterface_AnimInstances>())
 		{
@@ -458,6 +458,11 @@ void ACharacter_Base::BlockCompleted(const FInputActionInstance& _Instance)
 	}
 }
 
+
+void ACharacter_Base::SendAttackNotification_Implementation(bool isAttacking)
+{
+	bIsAttacking = isAttacking;
+}
 
 //void ACharacter_Base::ComboAttack()
 //{

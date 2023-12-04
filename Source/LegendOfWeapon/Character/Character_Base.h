@@ -5,6 +5,7 @@
 #include "../Header/global.h"
 #include "../Private/Interface_AnimInstances.h"
 #include "../Private/Interface_PlayMontages.h"
+#include "../Private/Interface_isAttacking.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -21,7 +22,7 @@
 class AWeapon_Base;
 
 UCLASS()
-class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter
+class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter, public IInterface_isAttacking
 {
 	GENERATED_BODY()
 	
@@ -55,6 +56,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bool")
 	bool bIsAttacking = false;
+
+	virtual void SendAttackNotification_Implementation(bool isAttacking) override;
 
 	int32 ComboCount = 0;
 	bool  bCanCombo  = false;
