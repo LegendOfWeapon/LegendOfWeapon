@@ -15,6 +15,7 @@ public class LegendOfWeapon : ModuleRules
 				, "InputCore"
 				, "EnhancedInput"
 				, "UMG"
+				, "OnlineSubsystem"
 				});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

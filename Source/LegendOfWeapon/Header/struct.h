@@ -30,4 +30,7 @@ struct FPlayerInfo {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8					playerIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString					sessionName;
 };

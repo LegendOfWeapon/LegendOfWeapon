@@ -69,7 +69,7 @@ void AServerGameMode_Base::PostLogin(APlayerController* newPlayer)
 		AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("No NetDriver"));
 	}
 
-	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("End"));
+	AB_LOG(LogABNetwork, Log, TEXT("%s"), TEXT("In Game Success End"));
 
 	FPlayerInfo playerInfo;
 	playerInfo.Controller = newPlayer;

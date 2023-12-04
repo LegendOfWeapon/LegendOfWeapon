@@ -10,4 +10,15 @@
 #define LOG_CALLINFO ANSI_TO_TCHAR(__FUNCTION__)
 #define AB_LOG(LogCat, Verbosity, Format, ...) UE_LOG(LogCat, Verbosity, TEXT("[%s][%s/%s] %s %s"), LOG_NETMODEINFO, LOG_LOCALROLEINFO, LOG_REMOTEROLEINFO, LOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__))
 
+/*技记 包访 概农肺*/
+#define GET_ONLINE_SESSIONS(OnlineSessionVar) \
+    IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get(); \
+    IOnlineSessionPtr OnlineSessionVar; \
+    if (OnlineSub) \
+    { \
+        OnlineSessionVar = OnlineSub->GetSessionInterface(); \
+        if(!OnlineSessionVar.IsValid()) \
+            verify(false); \
+    }
+
 DECLARE_LOG_CATEGORY_EXTERN(LogABNetwork, Log, All);
