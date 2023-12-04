@@ -34,7 +34,7 @@ void ACharacter_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//ÇöÀç Ã¼·Â ¸®ÇÃ¸®ÄÉÀÌÆ®
+	//ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	DOREPLIFETIME(ACharacter_Base, CurrentHealth);
 }
 
@@ -51,13 +51,13 @@ void ACharacter_Base::BeginPlay()
 
 		if (pLocalPlayer && !InputMapping.IsNull())
 		{
-			// LocalPlayerÀÇ EnhancedInput ½Ã½ºÅÛÀ» ¾ò¾î¼­, »ç¿ëÇÒ IMC¸¦ ¼¼ÆÃ
+			// LocalPlayerï¿½ï¿½ EnhancedInput ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î¼­, ï¿½ï¿½ï¿½ï¿½ï¿½ IMCï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			UEnhancedInputLocalPlayerSubsystem* pSubsystem = pLocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 			pSubsystem->AddMappingContext(InputMapping.LoadSynchronous(), 0);
 		}
 	}	
 
-	// HUD Ã¼·Â ¼³Á¤
+	// HUD Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	AServerPlayerController_Base* pTempController = Cast<AServerPlayerController_Base>(GetController());
 	if (pTempController && pTempController->IsLocalController())
 	{
@@ -66,7 +66,7 @@ void ACharacter_Base::BeginPlay()
 		PlayerInfoWidget->SetHPBarRatio(1.f);
 	}
 
-	// Ãæµ¹ ½Ã È£ÃâÇÒ ÇÔ¼ö ¹ÙÀÎµù
+	// ï¿½æµ¹ ï¿½ï¿½ È£ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½Îµï¿½
 	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ACharacter_Base::OnHit);
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACharacter_Base::BeginOverlap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACharacter_Base::EndOverlap);
@@ -107,10 +107,10 @@ void ACharacter_Base::OnRep_CurrentHealth()
 
 void ACharacter_Base::OnHealthUpdate()
 {
-	//Å¬¶óÀÌ¾ðÆ® Àü¿ë ÇÔ¼ö ±â´É
+	//Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½
 	if (IsLocallyControlled())
 	{
-		// HUD Ã¼·Â ¼³Á¤
+		// HUD Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		AServerPlayerController_Base* pTempController = Cast<AServerPlayerController_Base>(GetController());
 		if (pTempController)
 		{
@@ -133,7 +133,7 @@ void ACharacter_Base::OnHealthUpdate()
 
 	}
 
-	//¼­¹ö Àü¿ë ÇÔ¼ö ±â´É
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		FString healthMessage = FString::Printf(TEXT("%s now has %f health remaining."), *GetFName().ToString(), CurrentHealth);
@@ -145,7 +145,10 @@ void ACharacter_Base::OnHealthUpdate()
 void ACharacter_Base::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	bIsWPressed = false;
+	bIsSPressed = false;
+	bIsAPressed = false;
+	bIsDPressed = false;
 }
 
 // Called to bind functionality to input
@@ -153,7 +156,7 @@ void ACharacter_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// InputComponent -> EnhancedInputComponent ·Î ´Ù¿îÄ³½ºÆÃ
+	// InputComponent -> EnhancedInputComponent ï¿½ï¿½ ï¿½Ù¿ï¿½Ä³ï¿½ï¿½ï¿½ï¿½
 	UEnhancedInputComponent* InputCom = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
 	if (nullptr == InputCom) return;
@@ -232,10 +235,73 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 	GetActorForwardVector()* vInput.X;
 	GetActorForwardVector()* vInput.Y;
 
+	if (vInput.X > 0.f && vInput.Y == 0.f)
+	{
+		bIsWPressed = true;
+		bIsSPressed = false;
+		bIsAPressed = false;
+		bIsDPressed = false;
+	}
+	else if (vInput.X < 0.f && vInput.Y == 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = true;
+		bIsAPressed = false;
+		bIsDPressed = false;
+	}
+	else if (vInput.X == 0.f && vInput.Y == 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = false;
+		bIsAPressed = false;
+		bIsDPressed = false;
+	}
+	else if (vInput.X == 0.f && vInput.Y > 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = false;
+		bIsAPressed = true;
+		bIsDPressed = false;
+	}
+	else if (vInput.X == 0.f && vInput.Y < 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = false;
+		bIsAPressed = false;
+		bIsDPressed = true;
+	}
+	else if (vInput.X > 0.f && vInput.Y > 0.f)
+	{
+		bIsWPressed = true;
+		bIsSPressed = false;
+		bIsAPressed = true;
+		bIsDPressed = false;
+	}
+	else if (vInput.X > 0.f && vInput.Y < 0.f)
+	{
+		bIsWPressed = true;
+		bIsSPressed = false;
+		bIsAPressed = false;
+		bIsDPressed = true;
+	}
+	else if (vInput.X < 0.f && vInput.Y > 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = true;
+		bIsAPressed = true;
+		bIsDPressed = false;
+	}
+	else if (vInput.X < 0.f && vInput.Y < 0.f)
+	{
+		bIsWPressed = false;
+		bIsSPressed = true;
+		bIsAPressed = false;
+		bIsDPressed = true;
+	}
 
-	if (vInput.X != 0.f)
+	if (vInput.X != 0.f && !bIsAttacking)
 		GetCharacterMovement()->AddInputVector(GetActorForwardVector() * vInput.X);
-	if (vInput.Y != 0.f)
+	if (vInput.Y != 0.f && !bIsAttacking)
 		GetCharacterMovement()->AddInputVector(GetActorRightVector() * vInput.Y);
 }
 
@@ -255,8 +321,26 @@ void ACharacter_Base::LightAttackTriggered(const FInputActionInstance& _Instance
 		}
 		if (AnimInstance->Implements<UInterface_PlayMontages>())
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("interface implemented"));
-			IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::LightAttack);
+			if (bIsWPressed && !bIsAPressed && !bIsDPressed) // only W
+			{
+				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::W_LightAttack);
+			}
+			else if (bIsSPressed && !bIsAPressed && !bIsDPressed) // only S
+			{
+				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::S_LightAttack);
+			}
+			else if (bIsAPressed && !bIsWPressed && !bIsSPressed) // only A
+			{
+				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::A_LightAttack);
+			}
+			else if (bIsDPressed && !bIsWPressed && !bIsSPressed) // only D
+			{
+				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::D_LightAttack);
+			}
+			else // nothing or W + A or W + D or S + A or S + D
+			{
+				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::LightAttack);
+			}
 		}
 	}
 }
@@ -336,7 +420,7 @@ void ACharacter_Base::HeavyAttackCanceled(const FInputActionInstance& _Instance)
 void ACharacter_Base::BlockTriggered(const FInputActionInstance& _Instance)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance != nullptr)
+	if (AnimInstance != nullptr && !bIsAttacking)
 	{
 		if (AnimInstance->Implements<UInterface_AnimInstances>())
 		{
@@ -357,9 +441,13 @@ void ACharacter_Base::BlockCompleted(const FInputActionInstance& _Instance)
 	}
 }
 
+void ACharacter_Base::SendAttackNotification_Implementation(bool isAttacking)
+{
+	bIsAttacking = isAttacking;
+}
 
 // ===============
-// Ãæµ¹ ÀÌº¥Æ® ÇÔ¼ö
+// ï¿½æµ¹ ï¿½Ìºï¿½Æ® ï¿½Ô¼ï¿½
 // ===============
 void ACharacter_Base::OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, FVector _vNormalImpulse, const FHitResult& _Hit)
 {
