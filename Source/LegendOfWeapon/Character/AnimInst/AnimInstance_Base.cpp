@@ -23,6 +23,7 @@ void UAnimInstance_Base::NativeUpdateAnimation(float _fDeltaTime)
 		return;
 }
 
+
 //void UAnimInstance_Base::SendCharacterState_Implementation(ECharacterState _State)
 //{
 //	CharacterStates = _State;
