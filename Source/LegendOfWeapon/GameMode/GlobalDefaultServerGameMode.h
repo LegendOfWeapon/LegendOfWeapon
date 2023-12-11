@@ -2,8 +2,9 @@
 
 #pragma once
 
-//#include "../Header/global.h"
+#include "../Header/global.h"
 #include "OnlineSessionSettings.h"
+#include "Interfaces/OnlineSessionInterface.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
@@ -44,9 +45,18 @@ public:
 
 private:
 	void OnFindSessionsComplete(bool bWasSuccessful);
+	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 
 private:
-	//TArray<FPlayerInfo> players; //敲饭捞绢 包府
-	TArray<FString> sessionNames; //技记 包府
+	IOnlineSessionPtr OnlineSessionInterface; //OnlineSession Interface
+
+private:
+	TArray<FPlayerInfo*> players; //敲饭捞绢 包府
+	TQueue<FPlayerInfo*> sessionQ; //技记俊 甸绢哎 措扁凯 包府
+	TArray<FString> sessionNames; //技记 包府	
 	TSharedRef<FOnlineSessionSearch> MySessionSearch; //Result Of Session Searching
+
+private:
+	FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;//技记 积己 胆府霸捞飘 官牢爹
+	FOnCreateSessionCompleteDelegate CreateSessionCompleteDelegate;//技记 积己 胆府霸捞飘 官牢爹
 };

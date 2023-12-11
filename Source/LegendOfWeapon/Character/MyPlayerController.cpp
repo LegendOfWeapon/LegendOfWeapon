@@ -48,6 +48,16 @@ void AMyPlayerController::ServerOpenLevel_Implementation()
 }
 
 
+void AMyPlayerController::ClientTravelWithServer()
+{
+	/*UWorld* world = GetWorld();
+	if (world) {
+		world->ServerTravel(TEXT("ServerTestMap"));
+	}*/
+
+	this->ClientTravel(TEXT("ServerTestMap"), ETravelType::TRAVEL_Absolute);
+}
+
 void AMyPlayerController::OpenLevelOnServer()
 {
 	if (IsLocalController())

@@ -28,6 +28,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerOpenLevel();
 
+	void ClientTravelWithServer();
+
 	// 이 함수는 클라이언트가 호출합니다
 	void OpenLevelOnServer();
 

@@ -6,18 +6,25 @@
 
 #include "Net/UnrealNetwork.h"
 #include "OnlineSubsystem.h"
-#include "Interfaces/OnlineSessionInterface.h"
 
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
 
 AGlobalDefaultServerGameMode::AGlobalDefaultServerGameMode()
+	:MySessionSearch(MakeShareable(new FOnlineSessionSearch()))
 {
 	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassRef(TEXT("/Script/CoreUObject.Class'/Script/LegendOfWeapon.MyPlayerController'"));
 	if (PlayerControllerClassRef.Class)
 	{
 		PlayerControllerClass = PlayerControllerClassRef.Class;
 	}
+
+	OnFindSessionsCompleteDelegate.BindUObject(this, &AGlobalDefaultServerGameMode::OnFindSessionsComplete);
+	CreateSessionCompleteDelegate.BindUObject(this, &AGlobalDefaultServerGameMode::OnCreateSessionComplete);
+
+	GET_ONLINE_SESSIONS(OnlineSessions);
+	OnlineSessions->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
+	OnlineSessions->AddOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegate);
 }
 
 void AGlobalDefaultServerGameMode::BeginPlay()
@@ -39,11 +46,13 @@ APlayerController* AGlobalDefaultServerGameMode::Login(UPlayer* NewPlayer, ENetR
 {
 	APlayerController* playerController = Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
 	
-	//FPlayerInfo playerInfo;
-	//playerInfo.Controller = playerController;
-	//playerInfo.playerIndex = players.Num();
-	//playerInfo.sessionName = nullptr;
-	//players.Add(playerInfo);
+	FPlayerInfo* playerInfo = new FPlayerInfo;
+	playerInfo->Controller = playerController;
+	playerInfo->playerIndex = players.Num();
+	playerInfo->sessionName = nullptr;
+	players.Add(playerInfo);
+
+	sessionQ.Enqueue(playerInfo);
 
 	return playerController;
 }
@@ -60,8 +69,6 @@ void AGlobalDefaultServerGameMode::PostLogin(APlayerController* newPlayer)
 void AGlobalDefaultServerGameMode::StartPlay()
 {
 	Super::StartPlay();
-	
-	CreateSession();	
 }
 
 FUniqueNetIdPtr AGlobalDefaultServerGameMode::GetPlayerNetId(APlayerController* player)
@@ -84,6 +91,7 @@ void AGlobalDefaultServerGameMode::CreateSession()
 		if (Sessions.IsValid())
 		{
 			FString sessionName = sessionNames.Num() + "Session";
+			AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Session Create"), *GetName());
 			//sessionNames.Add(FName(*sessionName));
 			sessionNames.Add(sessionName);
 
@@ -116,20 +124,32 @@ void AGlobalDefaultServerGameMode::ConnectPlayerToSession(APlayerController* pla
 {
 	GET_ONLINE_SESSIONS(OnlineSessions);
 
+	if (sessionNames.Num() == 0) {
+		CreateSession();
+	}
+
 	if (player != nullptr) {
-		auto PlayerId = player->PlayerState->GetUniqueId().GetUniqueNetId();
-		FNamedOnlineSession* session = GetSession(sessionNames[sessionNames.Num() - 1]);
+		JoinSession(player);
 	}
 }
 
 FNamedOnlineSession* AGlobalDefaultServerGameMode::GetSession(FString SessionName)
 {
+	AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Ingage GetSession"), *GetName());
 	GET_ONLINE_SESSIONS(OnlineSessions);
 	IOnlineSessionPtr Sessions = OnlineSessions;
 
 	FNamedOnlineSession* session = Sessions->GetNamedSession(FName(*SessionName));
 
-	return session;
+	if (session != nullptr) {
+		AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Session Belongs to"), *GetName());
+		return session;
+	}
+	else {
+		AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Session Belongs to"), *GetName());
+		return nullptr;
+	}
+
 }
 
 void AGlobalDefaultServerGameMode::JoinSession(APlayerController* playerController)
@@ -139,39 +159,55 @@ void AGlobalDefaultServerGameMode::JoinSession(APlayerController* playerControll
 
 	MySessionSearch->bIsLanQuery = false;
 	MySessionSearch->MaxSearchResults = 100;
-	MySessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+	const FName SettingKeywords = TEXT("MyCustomKeywords");
+	FString MySessionKeyword = TEXT("StartMap");
+	MySessionSearch->QuerySettings.Set(SettingKeywords, MySessionKeyword, EOnlineComparisonOp::Equals);
 
-	//FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
-	//OnFindSessionsCompleteDelegate.BindUObject(this, &AGlobalDefaultServerGameMode::OnFindSessionsComplete);
-	
-	//FUniqueNetIdPtr PlayerId = playerController->PlayerState->GetUniqueId().GetUniqueNetId();
-	//Sessions->FindSessions(*PlayerId, MySessionSearch);
+	FUniqueNetIdPtr PlayerId = playerController->PlayerState->GetUniqueId().GetUniqueNetId();
+	Sessions->FindSessions(*PlayerId, MySessionSearch);
+	AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Player Find Session"), *GetName());
 }
 
 void AGlobalDefaultServerGameMode::OnFindSessionsComplete(bool bWasSuccessful)
 {
+	AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Begin"), *GetName());
+	GET_ONLINE_SESSIONS(OnlineSessions);
+
+	if (bWasSuccessful)
+	{
+		for (const FOnlineSessionSearchResult& SearchResult : MySessionSearch->SearchResults)
+		{
+			GetSession(sessionNames[sessionNames.Num() - 1]);
+			if (SearchResult.Session.SessionSettings.Settings.Contains(SETTING_MAPNAME))
+			{
+				GetSession(sessionNames[sessionNames.Num() - 1]);
+				FString FoundSessionName;
+				SearchResult.Session.SessionSettings.Get(SETTING_MAPNAME, FoundSessionName);
+				UE_LOG(LogTemp, Warning, TEXT("Session Name: %s"), *FoundSessionName);
+
+				if (FoundSessionName == sessionNames[sessionNames.Num()-1]) // 여기서 "YourSessionName"을 원하는 세션 이름으로 대체
+				{
+					// 세션 참가
+					AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Player Ingage Session"), *GetName());
+					FPlayerInfo* playerController;
+					sessionQ.Dequeue(playerController);
+					FUniqueNetIdPtr PlayerId = playerController->Controller->PlayerState->GetUniqueId().GetUniqueNetId();
+					OnlineSessions->JoinSession(*PlayerId,"StartSession", SearchResult);
+					playerController->sessionName = sessionNames[sessionNames.Num() - 1];
+					break;
+				}
+			}
+		}
+	}
 }
 
-//void AGlobalDefaultServerGameMode::OnFindSessionsComplete(bool bWasSuccessful)
-//{
-//	GET_ONLINE_SESSIONS(OnlineSessions);
-//
-//	if (bWasSuccessful)
-//	{
-//		for (const FOnlineSessionSearchResult& SearchResult : MySessionSearch->SearchResults)
-//		{
-//			if (SearchResult.Session.SessionSettings.Settings.Contains(SETTING_MAPNAME))
-//			{
-//				FString FoundSessionName;
-//				SearchResult.Session.SessionSettings.Get(SETTING_MAPNAME, FoundSessionName);
-//
-//				if (FoundSessionName == sessionNames[sessionNames.Num()-1]) // 여기서 "YourSessionName"을 원하는 세션 이름으로 대체
-//				{
-//					// 세션 참가
-//					OnlineSessions->JoinSession(0, "StartSession", SearchResult);
-//					break;
-//				}
-//			}
-//		}
-//	}
-//}
+void AGlobalDefaultServerGameMode::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
+{
+	if (bWasSuccessful) {
+		AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Session is created."), *GetName());
+		UE_LOG(LogTemp, Log, TEXT("Log Message: %s"), *(SessionName.ToString()));
+	}
+	else {
+		AB_LOG(LogABNetwork, Log, TEXT("%s %s"), TEXT("Session is not created"), *GetName());
+	}
+}
