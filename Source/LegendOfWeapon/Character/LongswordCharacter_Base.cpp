@@ -40,30 +40,33 @@ void ALongswordCharacter_Base::Tick(float DeltaTime)
 
 void ALongswordCharacter_Base::LightAttackTriggered(const FInputActionInstance& _Instance)
 {	
-	// 해당 액션시 수행해야 할 코드 작성
-	UE_LOG(LogTemp, Warning, TEXT("Longsword Character LightAttack Triggered"));
+	Super::LightAttackTriggered(_Instance);
 }
 
 void ALongswordCharacter_Base::LightAttackCanceled(const FInputActionInstance& _Instance)
 {
-	// 해당 액션시 수행해야 할 코드 작성
-	UE_LOG(LogTemp, Warning, TEXT("Longsword Character LightAttack Canceled"));
+	Super::LightAttackCanceled(_Instance);
+
 }
 
 void ALongswordCharacter_Base::MiddleAttackTriggered(const FInputActionInstance& _Instance)
 {
+	Super::MiddleAttackTriggered(_Instance);
 }
 
 void ALongswordCharacter_Base::MiddleAttackCanceled(const FInputActionInstance& _Instance)
 {
+	Super::MiddleAttackCanceled(_Instance);
 }
 
 void ALongswordCharacter_Base::HeavyAttackTriggered(const FInputActionInstance& _Instance)
 {
+	Super::HeavyAttackTriggered(_Instance);
 }
 
 void ALongswordCharacter_Base::HeavyAttackCanceled(const FInputActionInstance& _Instance)
 {
+	Super::HeavyAttackCanceled(_Instance);
 }
 
 

@@ -19,31 +19,4 @@ void USpear_AnimInst_Base::NativeUpdateAnimation(float _fDeltaTime)
 
 }
 
-
-void USpear_AnimInst_Base::AnimNotify_Attack1End()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Attack1End Notify Called"));
-
-	if (Character->ComboCount == 0)
-		Character->IsLightAttack = false;
-
-}
-
-void USpear_AnimInst_Base::AnimNotify_Attack2End()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Attack2End Notify Called"));
-
-
-	if (Character->ComboCount == 1)
-	{
-		Character->IsLightAttack = false;
-		Character->ComboCount = 0;
-	}
-}
-
-void USpear_AnimInst_Base::AnimNotify_AttackEnd()
-{
-	UE_LOG(LogTemp, Warning, TEXT("AttackEnd Notify Called"));
-	Character->IsLightAttack = false;
-	Character->ComboCount = 0;
 }

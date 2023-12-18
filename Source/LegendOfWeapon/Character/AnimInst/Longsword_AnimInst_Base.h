@@ -13,5 +13,10 @@ UCLASS()
 class LEGENDOFWEAPON_API ULongsword_AnimInst_Base : public UAnimInstance_Base
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual void NativeInitializeAnimation() override;
+	virtual void NativeBeginPlay() override;
+	virtual void NativeUpdateAnimation(float _fDeltaTime) override;
+
 };
