@@ -149,6 +149,13 @@ void ACharacter_Base::Tick(float DeltaTime)
 	bIsSPressed = false;
 	bIsAPressed = false;
 	bIsDPressed = false;
+
+	if (m_Cam)
+	{
+		FVector vCamLoc = m_Cam->GetComponentLocation();
+
+		UE_LOG(LogTemp, Log, TEXT("CamLoc : %f, %f, %f"), vCamLoc.X, vCamLoc.Y, vCamLoc.Z)
+	}
 }
 
 // Called to bind functionality to input
