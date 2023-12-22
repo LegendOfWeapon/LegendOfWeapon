@@ -19,4 +19,3 @@ void USpear_AnimInst_Base::NativeUpdateAnimation(float _fDeltaTime)
 
 }
 
-}
