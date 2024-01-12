@@ -170,4 +170,35 @@ protected:
 	UFUNCTION()
 	virtual void EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
 		, int32 _Index);
+
+	public:
+		// Declare RPC function perform in server
+		UFUNCTION(Server, Reliable)
+		void Server_PerformLightAttack();
+		UFUNCTION(Server, Reliable)
+		void Server_PerformLightAttackCancel();
+
+		UFUNCTION(Server, Reliable)
+		void Server_PerformMiddleAttack();
+
+		UFUNCTION(Server, Reliable)
+		void Server_PerformMiddleAttackCancel();
+
+		UFUNCTION(Server, Reliable)
+		void Server_PerformHeavyAttack();
+
+		UFUNCTION(Server, Reliable)
+		void Server_PerformHeavyAttackCancel();
+
+		UFUNCTION(NetMulticast, Reliable)
+		void LightAttack();
+		void LightAttackCancel();
+
+		UFUNCTION(NetMulticast, Reliable)
+		void MiddleAttack();
+		void MiddleAttackCancel();
+
+		UFUNCTION(NetMulticast, Reliable)
+		void HeavyAttack();
+		void HeavyAttackCancel();
 };

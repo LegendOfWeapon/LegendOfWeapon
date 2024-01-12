@@ -149,13 +149,6 @@ void ACharacter_Base::Tick(float DeltaTime)
 	bIsSPressed = false;
 	bIsAPressed = false;
 	bIsDPressed = false;
-
-	if (m_Cam)
-	{
-		FVector vCamLoc = m_Cam->GetComponentLocation();
-
-		UE_LOG(LogTemp, Log, TEXT("CamLoc : %f, %f, %f"), vCamLoc.X, vCamLoc.Y, vCamLoc.Z)
-	}
 }
 
 // Called to bind functionality to input
@@ -312,13 +305,12 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		GetCharacterMovement()->AddInputVector(GetActorRightVector() * vInput.Y);
 }
 
-void ACharacter_Base::LightAttackTriggered(const FInputActionInstance& _Instance)
+void ACharacter_Base::LightAttack_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Character LightAttack Triggered"));
-	
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance != nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("LightAttack() function called"));
 		//UE_LOG(LogTemp, Warning, TEXT("Anim Instance is not null!"));
 		//Execute SendCharacterState
 		if (AnimInstance->Implements<UInterface_AnimInstances>())
@@ -347,43 +339,13 @@ void ACharacter_Base::LightAttackTriggered(const FInputActionInstance& _Instance
 			else // nothing or W + A or W + D or S + A or S + D
 			{
 				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::LightAttack);
+				AB_LOG(LogABNetwork, Log, TEXT("%s %s Execute_LightAttack"), TEXT("Find Session For"), *GetName());
 			}
 		}
 	}
-
-	//if (!IsLightAttack) // �⺻����
-	//{
-	//	IsLightAttack = true;
-	//	bCanCombo = true;  // ���߿� ��Ƽ���̷� �޺� ���� �ð����� ����
-	//	
-	//	// �޺� ������ ���� �� �ִ� �ð� ���� (0.5)
-	//	GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &ACharacter_Base::ResetCombo, ComboWindowTime, false);
-
-	//	// �⺻ ���� ��Ÿ�� ��� (ù ��° ���� �ִϸ��̼� - 'LightAttack' ����)
-	//	GetMesh()->GetAnimInstance()->Montage_Play(DefaultMontage.LoadSynchronous(), 1.0f);
-	//	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("LightAttack"), DefaultMontage.LoadSynchronous());
-	//}
-	//else if (bCanCombo && ComboCount < 2)
-	//{
-	//	ComboAttack();
-	//}
 }
 
-void ACharacter_Base::LightAttackCanceled(const FInputActionInstance& _Instance)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Character LightAttack Canceled"));
-	//send attack type and character state
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance != nullptr)
-	{
-		if (AnimInstance->Implements<UInterface_AnimInstances>())
-		{
-			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
-		}
-	}
-}
-
-void ACharacter_Base::MiddleAttackTriggered(const FInputActionInstance& _Instance)
+void ACharacter_Base::MiddleAttack_Implementation() 
 {
 	UE_LOG(LogTemp, Warning, TEXT("Character MiddleAttack triggered"));
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -400,26 +362,14 @@ void ACharacter_Base::MiddleAttackTriggered(const FInputActionInstance& _Instanc
 	}
 }
 
-void ACharacter_Base::MiddleAttackCanceled(const FInputActionInstance& _Instance)
+void ACharacter_Base::HeavyAttack_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Character HeavyAttack triggered"));
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance != nullptr)
 	{
 		if (AnimInstance->Implements<UInterface_AnimInstances>())
 		{
-			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
-		}
-	}
-}
-
-void ACharacter_Base::HeavyAttackTriggered(const FInputActionInstance& _Instance)
-{
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance != nullptr)
-	{
-		if (AnimInstance->Implements<UInterface_AnimInstances>())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Character HeavyAttack triggered"));
 			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Attacking);
 		}
 		if (AnimInstance->Implements<UInterface_PlayMontages>())
@@ -429,15 +379,162 @@ void ACharacter_Base::HeavyAttackTriggered(const FInputActionInstance& _Instance
 	}
 }
 
-void ACharacter_Base::HeavyAttackCanceled(const FInputActionInstance& _Instance)
+void ACharacter_Base::LightAttackCancel()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Character LightAttack Canceled"));
+	//send attack type and character state
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance != nullptr)
 	{
 		if (AnimInstance->Implements<UInterface_AnimInstances>())
 		{
 			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
 		}
+	}
+}
+
+void ACharacter_Base::MiddleAttackCancel()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Character MiddleAttack Canceled"));
+	//send attack type and character state
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
+		}
+	}
+}
+
+void ACharacter_Base::HeavyAttackCancel()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Character HeavyAttack Canceled"));
+	//send attack type and character state
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
+		}
+	}
+}
+
+void ACharacter_Base::Server_PerformLightAttack_Implementation()
+{
+	LightAttack();
+}
+
+void ACharacter_Base::Server_PerformMiddleAttack_Implementation()
+{
+	MiddleAttack();
+}
+
+void ACharacter_Base::Server_PerformHeavyAttack_Implementation()
+{
+	HeavyAttack();
+}
+
+void ACharacter_Base::Server_PerformLightAttackCancel_Implementation()
+{
+	LightAttackCancel();
+}
+
+void ACharacter_Base::Server_PerformMiddleAttackCancel_Implementation()
+{
+	MiddleAttackCancel();
+}
+
+void ACharacter_Base::Server_PerformHeavyAttackCancel_Implementation()
+{
+	HeavyAttackCancel();
+}
+
+//bool ACharacter_Base::Server_PerformLightAttack_Validate()
+//{
+//	// If you want to check if the player is allowed to perform the action
+//	return true;
+//}
+
+
+void ACharacter_Base::LightAttackTriggered(const FInputActionInstance& _Instance)
+{
+	if (HasAuthority())
+	{
+			UE_LOG(LogTemp, Warning, TEXT("Server :::: LightAttack()"));
+			LightAttack();
+	}
+	if (IsLocallyControlled())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client:::: Server_PerformLightAttack()"));
+		Server_PerformLightAttack();
+	}
+}
+
+
+void ACharacter_Base::MiddleAttackTriggered(const FInputActionInstance& _Instance)
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Server :::: MiddleAttack()"));
+		MiddleAttack();
+	}
+	if (IsLocallyControlled())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client:::: Server_PerformMiddleAttack()"));
+		Server_PerformMiddleAttack();
+	}
+}
+
+
+void ACharacter_Base::HeavyAttackTriggered(const FInputActionInstance& _Instance)
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Server :::: HeavyAttack()"));
+		HeavyAttack();
+	}
+	if (IsLocallyControlled())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client:::: Server_PerformHeavyAttack()"));
+		Server_PerformHeavyAttack();
+	}
+}
+
+void ACharacter_Base::LightAttackCanceled(const FInputActionInstance& _Instance)
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character LightAttack Canceled"));
+		LightAttackCancel();
+	}
+	else
+	{
+		Server_PerformLightAttackCancel();
+	}
+}
+
+void ACharacter_Base::MiddleAttackCanceled(const FInputActionInstance& _Instance)
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character MiddleAttack Canceled"));
+		MiddleAttackCancel();
+	}
+	else
+	{
+		Server_PerformMiddleAttackCancel();
+	}
+}
+
+void ACharacter_Base::HeavyAttackCanceled(const FInputActionInstance& _Instance)
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character HeavyAttack Canceled"));
+		HeavyAttackCancel();
+	}
+	else
+	{
+		Server_PerformHeavyAttackCancel();
 	}
 }
 
