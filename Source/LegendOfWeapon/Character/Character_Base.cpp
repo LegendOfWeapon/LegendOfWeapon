@@ -28,6 +28,7 @@ ACharacter_Base::ACharacter_Base()
 
 	m_Arm->SetupAttachment(GetCapsuleComponent());
 	m_Cam->SetupAttachment(m_Arm);
+	bReplicates = true;
 }
 
 void ACharacter_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -36,6 +37,7 @@ void ACharacter_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 	//���� ü�� ���ø�����Ʈ
 	DOREPLIFETIME(ACharacter_Base, CurrentHealth);
+	DOREPLIFETIME(ACharacter_Base, AttackTypes);
 }
 
 // Called when the game starts or when spawned
@@ -221,6 +223,10 @@ float ACharacter_Base::TakeDamage(float DamageTaken, FDamageEvent const& DamageE
 	return damageApplied;
 }
 
+void ACharacter_Base::ServerSetAttackTypes_Implementation(EAttackTypes _AttackTypes)
+{
+	AttackTypes = _AttackTypes;
+}
 
 // ==================
 // InputAction BindAction
@@ -241,6 +247,7 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = false;
 		bIsDPressed = false;
+		AttackTypes = EAttackTypes::W_LightAttack;
 	}
 	else if (vInput.X < 0.f && vInput.Y == 0.f)
 	{
@@ -248,6 +255,7 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = true;
 		bIsAPressed = false;
 		bIsDPressed = false;
+		AttackTypes = EAttackTypes::S_LightAttack;
 	}
 	else if (vInput.X == 0.f && vInput.Y == 0.f)
 	{
@@ -255,6 +263,7 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = false;
 		bIsDPressed = false;
+		AttackTypes = EAttackTypes::LightAttack;
 	}
 	else if (vInput.X == 0.f && vInput.Y > 0.f)
 	{
@@ -262,6 +271,7 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = true;
 		bIsDPressed = false;
+		AttackTypes = EAttackTypes::A_LightAttack;
 	}
 	else if (vInput.X == 0.f && vInput.Y < 0.f)
 	{
@@ -269,6 +279,7 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = false;
 		bIsDPressed = true;
+		AttackTypes = EAttackTypes::D_LightAttack;
 	}
 	else if (vInput.X > 0.f && vInput.Y > 0.f)
 	{
@@ -276,6 +287,7 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = true;
 		bIsDPressed = false;
+		AttackTypes = EAttackTypes::LightAttack;
 	}
 	else if (vInput.X > 0.f && vInput.Y < 0.f)
 	{
@@ -283,6 +295,7 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = false;
 		bIsDPressed = true;
+		AttackTypes = EAttackTypes::LightAttack;
 	}
 	else if (vInput.X < 0.f && vInput.Y > 0.f)
 	{
@@ -290,6 +303,7 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = true;
 		bIsAPressed = true;
 		bIsDPressed = false;
+		AttackTypes = EAttackTypes::LightAttack;
 	}
 	else if (vInput.X < 0.f && vInput.Y < 0.f)
 	{
@@ -297,7 +311,9 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = true;
 		bIsAPressed = false;
 		bIsDPressed = true;
+		AttackTypes = EAttackTypes::LightAttack;
 	}
+	ServerSetAttackTypes(AttackTypes);
 
 	if (vInput.X != 0.f && !bIsAttacking)
 		GetCharacterMovement()->AddInputVector(GetActorForwardVector() * vInput.X);
@@ -320,27 +336,7 @@ void ACharacter_Base::LightAttack_Implementation()
 		}
 		if (AnimInstance->Implements<UInterface_PlayMontages>())
 		{
-			if (bIsWPressed && !bIsAPressed && !bIsDPressed) // only W
-			{
-				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::W_LightAttack);
-			}
-			else if (bIsSPressed && !bIsAPressed && !bIsDPressed) // only S
-			{
-				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::S_LightAttack);
-			}
-			else if (bIsAPressed && !bIsWPressed && !bIsSPressed) // only A
-			{
-				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::A_LightAttack);
-			}
-			else if (bIsDPressed && !bIsWPressed && !bIsSPressed) // only D
-			{
-				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::D_LightAttack);
-			}
-			else // nothing or W + A or W + D or S + A or S + D
-			{
-				IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, EAttackTypes::LightAttack);
-				AB_LOG(LogABNetwork, Log, TEXT("%s %s Execute_LightAttack"), TEXT("Find Session For"), *GetName());
-			}
+			IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, AttackTypes);
 		}
 	}
 }

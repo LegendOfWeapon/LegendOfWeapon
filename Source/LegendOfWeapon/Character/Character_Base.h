@@ -45,7 +45,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
 	ECharacterState					CharacterStates;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enum")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Enum")
 	EAttackTypes					AttackTypes;
 
 
@@ -201,4 +201,7 @@ protected:
 		UFUNCTION(NetMulticast, Reliable)
 		void HeavyAttack();
 		void HeavyAttackCancel();
+
+		UFUNCTION(Server, Reliable)
+		void ServerSetAttackTypes(EAttackTypes _AttackType);
 };
