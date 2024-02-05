@@ -6,6 +6,7 @@
 #include "../Private/Interface_AnimInstances.h"
 #include "../Private/Interface_PlayMontages.h"
 #include "../Private/Interface_isAttacking.h"
+#include "../Weapon/Weapon_Base.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -17,9 +18,10 @@
 #include "InputMappingContext.h" 
 
 #include "CoreMinimal.h"
+
 #include "Character_Base.generated.h"
 
-class AWeapon_Base;
+
 
 UCLASS()
 class LEGENDOFWEAPON_API ACharacter_Base : public ACharacter, public IInterface_isAttacking
@@ -33,8 +35,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	USpringArmComponent*			m_Arm;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TSubclassOf<AWeapon_Base>		m_Weapon;
+
+	// reference to the own weapon
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	AWeapon_Base* EquippedWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool							IsLightAttack;
@@ -46,7 +52,9 @@ public:
 	ECharacterState					CharacterStates;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Enum")
-	EAttackTypes					AttackTypes;
+	EAttackTypes					AttackType;
+
+	void SpawnWeapon();
 
 
 	bool bIsWPressed = false;
@@ -66,6 +74,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TSoftObjectPtr<UAnimMontage>	DefaultMontage; // attack combo montage
 
+
+
 protected:
 	/** �÷��̾��� �ִ� ü��. ü���� �ִ��Դϴ�. �� ���� ���� �� ���۵Ǵ� ĳ������ ü�� ���Դϴ�.*/
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
@@ -74,6 +84,8 @@ protected:
 	/** �÷��̾��� ���� ü��. 0�� �Ǹ� ���� ������ ���ֵ˴ϴ�.*/
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
 		float CurrentHealth;
+
+
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -140,6 +152,7 @@ private:
 protected:
 	// Triggered BindAction
 	void Move(const FInputActionInstance& _Instance);
+	void MoveCanceled(const FInputActionInstance& _Instance);
 
 	UFUNCTION()
 	virtual void LightAttackTriggered(const FInputActionInstance& _Instance);
@@ -175,6 +188,7 @@ protected:
 		// Declare RPC function perform in server
 		UFUNCTION(Server, Reliable)
 		void Server_PerformLightAttack();
+
 		UFUNCTION(Server, Reliable)
 		void Server_PerformLightAttackCancel();
 
@@ -190,18 +204,38 @@ protected:
 		UFUNCTION(Server, Reliable)
 		void Server_PerformHeavyAttackCancel();
 
+		UFUNCTION(Server, Reliable)
+		void Server_PerformBlock();
+
+		UFUNCTION(Server, Reliable)
+		void Server_PerformBlockComplete();
+
 		UFUNCTION(NetMulticast, Reliable)
 		void LightAttack();
+		UFUNCTION(NetMulticast, Reliable)
 		void LightAttackCancel();
 
 		UFUNCTION(NetMulticast, Reliable)
 		void MiddleAttack();
+		UFUNCTION(NetMulticast, Reliable)
 		void MiddleAttackCancel();
 
 		UFUNCTION(NetMulticast, Reliable)
 		void HeavyAttack();
+		UFUNCTION(NetMulticast, Reliable)
 		void HeavyAttackCancel();
+
+		UFUNCTION(NetMulticast, Reliable)
+		void BlockingOn();
+		UFUNCTION(NetMulticast, Reliable)
+		void BlockComplete();
 
 		UFUNCTION(Server, Reliable)
 		void ServerSetAttackTypes(EAttackTypes _AttackType);
+
+		UFUNCTION(BlueprintCallable, Category = "HitDetection")
+		void HitDetect();
+
+		UFUNCTION(BlueprintCallable, Category = "HitDetection")
+		void EndHitDetect();
 };

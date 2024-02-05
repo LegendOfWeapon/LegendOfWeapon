@@ -26,6 +26,7 @@ public:
 	// Sets default values for this character's properties
 	ASpearCharacter_Base();
 
+
 private:
 	virtual void LightAttackTriggered(const FInputActionInstance& _Instance) override;
 	virtual void LightAttackCanceled(const FInputActionInstance& _Instance) override;

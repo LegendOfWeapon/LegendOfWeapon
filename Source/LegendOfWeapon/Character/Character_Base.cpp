@@ -37,7 +37,7 @@ void ACharacter_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 	//���� ü�� ���ø�����Ʈ
 	DOREPLIFETIME(ACharacter_Base, CurrentHealth);
-	DOREPLIFETIME(ACharacter_Base, AttackTypes);
+	DOREPLIFETIME(ACharacter_Base, AttackType);
 }
 
 // Called when the game starts or when spawned
@@ -67,6 +67,8 @@ void ACharacter_Base::BeginPlay()
 		PlayerInfoWidget->SetName(TEXT("ReSnow"));
 		PlayerInfoWidget->SetHPBarRatio(1.f);
 	}
+
+	SpawnWeapon();
 
 	// �浹 �� ȣ���� �Լ� ���ε�
 	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ACharacter_Base::OnHit);
@@ -151,6 +153,7 @@ void ACharacter_Base::Tick(float DeltaTime)
 	bIsSPressed = false;
 	bIsAPressed = false;
 	bIsDPressed = false;
+	
 }
 
 // Called to bind functionality to input
@@ -177,6 +180,7 @@ void ACharacter_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 			{
 			case EInputActionType::MOVE:
 				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::Move);
+				InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Canceled, this, &ACharacter_Base::MoveCanceled);
 				break;
 
 			case EInputActionType::LIGHT_ATTACK:
@@ -196,7 +200,7 @@ void ACharacter_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 			case EInputActionType::BLOCK:
 					InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &ACharacter_Base::BlockTriggered);
-					InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Completed, this, &ACharacter_Base::BlockCompleted);
+					InputCom->BindAction(pDA->IADataArr[i].Action.LoadSynchronous(), ETriggerEvent::Canceled, this, &ACharacter_Base::BlockCompleted);
 					break;
 
 			}
@@ -225,7 +229,7 @@ float ACharacter_Base::TakeDamage(float DamageTaken, FDamageEvent const& DamageE
 
 void ACharacter_Base::ServerSetAttackTypes_Implementation(EAttackTypes _AttackTypes)
 {
-	AttackTypes = _AttackTypes;
+	AttackType = _AttackTypes;
 }
 
 // ==================
@@ -240,14 +244,15 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 
 	GetActorForwardVector()* vInput.X;
 	GetActorForwardVector()* vInput.Y;
-
+	AttackType = EAttackTypes::LightAttack;
 	if (vInput.X > 0.f && vInput.Y == 0.f)
 	{
 		bIsWPressed = true;
 		bIsSPressed = false;
 		bIsAPressed = false;
 		bIsDPressed = false;
-		AttackTypes = EAttackTypes::W_LightAttack;
+		AttackType = EAttackTypes::W_LightAttack;
+		ServerSetAttackTypes(AttackType);
 	}
 	else if (vInput.X < 0.f && vInput.Y == 0.f)
 	{
@@ -255,7 +260,8 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = true;
 		bIsAPressed = false;
 		bIsDPressed = false;
-		AttackTypes = EAttackTypes::S_LightAttack;
+		AttackType = EAttackTypes::S_LightAttack;
+		ServerSetAttackTypes(AttackType);
 	}
 	else if (vInput.X == 0.f && vInput.Y == 0.f)
 	{
@@ -263,7 +269,8 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = false;
 		bIsDPressed = false;
-		AttackTypes = EAttackTypes::LightAttack;
+		AttackType = EAttackTypes::LightAttack;
+		ServerSetAttackTypes(AttackType);
 	}
 	else if (vInput.X == 0.f && vInput.Y > 0.f)
 	{
@@ -271,7 +278,8 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = true;
 		bIsDPressed = false;
-		AttackTypes = EAttackTypes::A_LightAttack;
+		AttackType = EAttackTypes::A_LightAttack;
+		ServerSetAttackTypes(AttackType);
 	}
 	else if (vInput.X == 0.f && vInput.Y < 0.f)
 	{
@@ -279,7 +287,8 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = false;
 		bIsDPressed = true;
-		AttackTypes = EAttackTypes::D_LightAttack;
+		AttackType = EAttackTypes::D_LightAttack;
+		ServerSetAttackTypes(AttackType);
 	}
 	else if (vInput.X > 0.f && vInput.Y > 0.f)
 	{
@@ -287,7 +296,8 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = true;
 		bIsDPressed = false;
-		AttackTypes = EAttackTypes::LightAttack;
+		AttackType = EAttackTypes::LightAttack;
+		ServerSetAttackTypes(AttackType);
 	}
 	else if (vInput.X > 0.f && vInput.Y < 0.f)
 	{
@@ -295,7 +305,8 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = false;
 		bIsAPressed = false;
 		bIsDPressed = true;
-		AttackTypes = EAttackTypes::LightAttack;
+		AttackType = EAttackTypes::LightAttack;
+		ServerSetAttackTypes(AttackType);
 	}
 	else if (vInput.X < 0.f && vInput.Y > 0.f)
 	{
@@ -303,7 +314,8 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = true;
 		bIsAPressed = true;
 		bIsDPressed = false;
-		AttackTypes = EAttackTypes::LightAttack;
+		AttackType = EAttackTypes::LightAttack;
+		ServerSetAttackTypes(AttackType);
 	}
 	else if (vInput.X < 0.f && vInput.Y < 0.f)
 	{
@@ -311,14 +323,23 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 		bIsSPressed = true;
 		bIsAPressed = false;
 		bIsDPressed = true;
-		AttackTypes = EAttackTypes::LightAttack;
+		AttackType = EAttackTypes::LightAttack;
+		ServerSetAttackTypes(AttackType);
 	}
-	ServerSetAttackTypes(AttackTypes);
+
 
 	if (vInput.X != 0.f && !bIsAttacking)
 		GetCharacterMovement()->AddInputVector(GetActorForwardVector() * vInput.X);
 	if (vInput.Y != 0.f && !bIsAttacking)
 		GetCharacterMovement()->AddInputVector(GetActorRightVector() * vInput.Y);
+}
+
+void ACharacter_Base::MoveCanceled(const FInputActionInstance& _Instance)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Character MoveCanceled Function"));
+	//GetCharacterMovement()->StopMovementImmediately();
+	AttackType = EAttackTypes::LightAttack;
+	ServerSetAttackTypes(AttackType);
 }
 
 void ACharacter_Base::LightAttack_Implementation()
@@ -336,7 +357,7 @@ void ACharacter_Base::LightAttack_Implementation()
 		}
 		if (AnimInstance->Implements<UInterface_PlayMontages>())
 		{
-			IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, AttackTypes);
+			IInterface_PlayMontages::Execute_SendAttackTypes(AnimInstance, AttackType);
 		}
 	}
 }
@@ -375,7 +396,20 @@ void ACharacter_Base::HeavyAttack_Implementation()
 	}
 }
 
-void ACharacter_Base::LightAttackCancel()
+void ACharacter_Base::BlockingOn_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Character Block triggered"));
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Blocking);
+		}
+	}
+}
+
+void ACharacter_Base::LightAttackCancel_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Character LightAttack Canceled"));
 	//send attack type and character state
@@ -388,7 +422,7 @@ void ACharacter_Base::LightAttackCancel()
 	}
 }
 
-void ACharacter_Base::MiddleAttackCancel()
+void ACharacter_Base::MiddleAttackCancel_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Character MiddleAttack Canceled"));
 	//send attack type and character state
@@ -401,9 +435,22 @@ void ACharacter_Base::MiddleAttackCancel()
 	}
 }
 
-void ACharacter_Base::HeavyAttackCancel()
+void ACharacter_Base::HeavyAttackCancel_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Character HeavyAttack Canceled"));
+	//send attack type and character state
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	{
+		if (AnimInstance->Implements<UInterface_AnimInstances>())
+		{
+			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
+		}
+	}
+}
+
+void ACharacter_Base::BlockComplete_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Character Block Completed"));
 	//send attack type and character state
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	{
@@ -429,6 +476,11 @@ void ACharacter_Base::Server_PerformHeavyAttack_Implementation()
 	HeavyAttack();
 }
 
+void ACharacter_Base::Server_PerformBlock_Implementation()
+{
+	BlockingOn();
+}
+
 void ACharacter_Base::Server_PerformLightAttackCancel_Implementation()
 {
 	LightAttackCancel();
@@ -442,6 +494,11 @@ void ACharacter_Base::Server_PerformMiddleAttackCancel_Implementation()
 void ACharacter_Base::Server_PerformHeavyAttackCancel_Implementation()
 {
 	HeavyAttackCancel();
+}
+
+void ACharacter_Base::Server_PerformBlockComplete_Implementation()
+{
+	BlockComplete();
 }
 
 //bool ACharacter_Base::Server_PerformLightAttack_Validate()
@@ -534,27 +591,30 @@ void ACharacter_Base::HeavyAttackCanceled(const FInputActionInstance& _Instance)
 	}
 }
 
+
 void ACharacter_Base::BlockTriggered(const FInputActionInstance& _Instance)
 {
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance != nullptr && !bIsAttacking)
+	if (HasAuthority())
 	{
-		if (AnimInstance->Implements<UInterface_AnimInstances>())
-		{
-			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Blocking);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Character Block Triggered"));
+		BlockingOn();
+	}
+	else
+	{
+		Server_PerformBlock();
 	}
 }
 
 void ACharacter_Base::BlockCompleted(const FInputActionInstance& _Instance)
 {
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance != nullptr)
+	if (HasAuthority())
 	{
-		if (AnimInstance->Implements<UInterface_AnimInstances>())
-		{
-			IInterface_AnimInstances::Execute_SendCharacterState(AnimInstance, ECharacterState::Idle);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Character Block Completed"));
+		BlockComplete();
+	}
+	else
+	{
+		Server_PerformBlockComplete();
 	}
 }
 
@@ -564,27 +624,6 @@ void ACharacter_Base::SendAttackNotification_Implementation(bool isAttacking)
 	bIsAttacking = isAttacking;
 }
 
-//void ACharacter_Base::ComboAttack()
-//{
-//	// �޺� ī��Ʈ�� ������� �޺� ���� ����
-//	ComboCount++;
-//	if (ComboCount == 1)
-//	{		// �� ��° ���� �ִϸ��̼����� ����
-//		GetMesh()->GetAnimInstance()->Montage_SetNextSection(FName("LightAttack"), FName("MiddleAttack"), DefaultMontage.LoadSynchronous());
-//
-//	}
-//	else if (ComboCount == 2)
-//	{		
-//		// �� ��° ���� �ִϸ��̼����� ����
-//		GetMesh()->GetAnimInstance()->Montage_SetNextSection(FName("MiddleAttack"), FName("HeavyAttack"), DefaultMontage.LoadSynchronous());
-//
-//		// �޺� ��, ����
-//		bCanCombo = false;
-//	}
-//
-//	// �޺��� ��ӵ� �� �ֵ��� ������ Ÿ�̸� �缳�� (0.5��)
-//	GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &ACharacter_Base::ResetCombo, ComboWindowTime, false);
-//}
 
 void ACharacter_Base::ResetCombo()
 {
@@ -593,6 +632,24 @@ void ACharacter_Base::ResetCombo()
 	GetWorld()->GetTimerManager().ClearTimer(ComboTimerHandle);
 }
 
+void ACharacter_Base::SpawnWeapon()
+{
+	if (m_Weapon) {
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		// 무기 인스턴스 생성
+		EquippedWeapon = GetWorld()->SpawnActor<AWeapon_Base>(m_Weapon, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+		if (EquippedWeapon)
+		{
+			// 무기를 캐릭터에 장착하는 로직
+			FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
+			EquippedWeapon->AttachToComponent(GetMesh(), AttachRules, TEXT("ik_hand_gunSocket"));
+			//Hand_RSocket
+			EquippedWeapon->m_pOwner = this;
+		}
+	}
+}
 
 
 // ===============
@@ -608,5 +665,76 @@ void ACharacter_Base::BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _
 
 void ACharacter_Base::EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index)
 {
+}
+
+//void ACharacter_Base::HitDetect1() 
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("HitDetect() function called"));
+//	// �浹 �̺�Ʈ �Լ� ���
+//	TArray<AActor*> IgnoreActors;
+//	IgnoreActors.Add(this);
+//	FCollisionQueryParams CollisionParams;
+//	CollisionParams.AddIgnoredActors(IgnoreActors);
+//
+//	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypesArray;
+//	ObjectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1));
+//
+//
+//	//Eq
+//
+//	FVector vStart = GetMesh()->GetSocketLocation(TEXT("Hand_R"));
+//	FVector vEnd = GetMesh()->GetSocketLocation(TEXT("Hand_R"));
+//
+//	FHitResult HitResult;
+//	bool bResult = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), vStart, vEnd, 50.f, ObjectTypesArray, false, IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 5.f);
+//
+//	//Out hit
+//
+//	if (bResult)
+//	{
+//		//Break hit result
+//
+//
+//
+//		//Get hit actor
+//		//Get hit actor's health component
+//
+//		//Apply damage
+//
+//		//Send hit notification
+//
+//		//UE_LOG(LogTemp, Warning, TEXT("HitDetect() function called"));
+//
+//	}	
+//}
+
+void ACharacter_Base::HitDetect() 
+{
+
+	// 무기의 BoxCollision 컴포넌트를 찾아 활성화 또는 비활성화
+	if (EquippedWeapon)
+	{
+		UBoxComponent* BoxCollision = EquippedWeapon->FindComponentByClass<UBoxComponent>();
+		if (BoxCollision)
+		{
+			BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			UE_LOG(LogTemp, Warning, TEXT("StartHitDetect?"));
+		}
+	}
+}
+
+void ACharacter_Base::EndHitDetect() 
+{
+
+	// 무기의 BoxCollision 컴포넌트를 찾아 활성화 또는 비활성화
+	if (EquippedWeapon)
+	{
+		UBoxComponent* BoxCollision = EquippedWeapon->FindComponentByClass<UBoxComponent>();
+		if (BoxCollision)
+		{
+			BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			UE_LOG(LogTemp, Warning, TEXT("EndHitDetect?"));
+		}
+	}
 }
 

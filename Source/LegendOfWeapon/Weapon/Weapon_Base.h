@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "../Character/Character_Base.h"
-
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Weapon_Base.generated.h"
@@ -19,6 +17,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	class ACharacter_Base* m_pOwner;  //  소유 플레이어
+
+	// Damage amount
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float DamageAmount;
 
 protected:
 	// Called when the game starts or when spawned

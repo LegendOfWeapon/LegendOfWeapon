@@ -21,7 +21,7 @@ void AServerGameMode_Base::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, this, &AServerGameMode_Base::DamagePlayers, 1.0f, true, 10.0f);
+	//GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, this, &AServerGameMode_Base::DamagePlayers, 1.0f, true, 10.0f);
 }
 
 void AServerGameMode_Base::Tick(float DeltaTime)
