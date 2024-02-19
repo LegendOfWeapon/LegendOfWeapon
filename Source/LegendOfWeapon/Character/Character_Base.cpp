@@ -72,8 +72,8 @@ void ACharacter_Base::BeginPlay()
 
 	// �浹 �� ȣ���� �Լ� ���ε�
 	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ACharacter_Base::OnHit);
-	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACharacter_Base::BeginOverlap);
-	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACharacter_Base::EndOverlap);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACharacter_Base::OnOverlapBegin);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ACharacter_Base::OnOverlapEnd);
 }
 
 void ACharacter_Base::PossessedBy(AController* NewController)
@@ -659,11 +659,11 @@ void ACharacter_Base::OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherAc
 {
 }
 
-void ACharacter_Base::BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult)
+void ACharacter_Base::OnOverlapBegin(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult)
 {
 }
 
-void ACharacter_Base::EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index)
+void ACharacter_Base::OnOverlapEnd(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index)
 {
 }
 

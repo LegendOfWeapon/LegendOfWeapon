@@ -22,6 +22,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float DamageAmount;
 
+	// 무기의 메인 컴포넌트 (예: Mesh)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* WeaponMesh;
+
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -30,17 +36,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-protected:
+public:
 	// 충돌 관련 Delegate
 	UFUNCTION()
 	virtual void OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
 		, FVector  _vNormalImpulse, const FHitResult& _Hit);
 
-	UFUNCTION()
-	virtual void BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void OnOverlapBegin(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
 		, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult);
 
-	UFUNCTION()
-	virtual void EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void OnOverlapEnd(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
 		, int32 _Index);
 };

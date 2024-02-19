@@ -27,13 +27,15 @@ void ASpear_Weapon_Base::OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _Othe
 {
 }
 
-void ASpear_Weapon_Base::BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult)
+void ASpear_Weapon_Base::OnOverlapBegin_Implementation(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult)
 {
-	Super::BeginOverlap(_PrimitiveCom, _OtherActor, _OtherPrimitiveCom, _Index, _bFromSweep, _HitResult);
+	Super::OnOverlapBegin(_PrimitiveCom, _OtherActor, _OtherPrimitiveCom, _Index, _bFromSweep, _HitResult);
+	UE_LOG(LogTemp, Warning, TEXT("Begin Over lap@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"));
 }
 
-void ASpear_Weapon_Base::EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index)
+void ASpear_Weapon_Base::OnOverlapEnd_Implementation(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index)
 {
-	Super::EndOverlap(_PrimitiveCom, _OtherActor, _OtherPrimitiveCom, _Index);
+	Super::OnOverlapEnd(_PrimitiveCom, _OtherActor, _OtherPrimitiveCom, _Index);
+	UE_LOG(LogTemp, Warning, TEXT("End Over lap@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"));
 }
 

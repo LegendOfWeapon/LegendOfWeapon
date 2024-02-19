@@ -11,13 +11,13 @@ AWeapon_Base::AWeapon_Base()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// 충돌 시 호출할 함수 바인딩
 	UBoxComponent* BoxCollision = FindComponentByClass<UBoxComponent>();
 	if (BoxCollision)
 	{
+		BoxCollision->SetNotifyRigidBodyCollision(true);
 		BoxCollision->OnComponentHit.AddDynamic(this, &AWeapon_Base::OnHit);
-		BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AWeapon_Base::BeginOverlap);
-		BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AWeapon_Base::EndOverlap);
+		BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AWeapon_Base::OnOverlapBegin);
+		BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AWeapon_Base::OnOverlapEnd);
 	}
 }
 
@@ -41,7 +41,7 @@ void AWeapon_Base::OnHit(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor
 	UE_LOG(LogTemp, Warning, TEXT("Weapon_Base OnHit!!@@@@@@@@@@@@@"));
 }
 
-void AWeapon_Base::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AWeapon_Base::OnOverlapBegin_Implementation(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	TSubclassOf<UDamageType> DamageTypeClass;
 	DamageTypeClass = UDamageType::StaticClass();
@@ -63,7 +63,7 @@ void AWeapon_Base::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
     }
 }
 
-void AWeapon_Base::EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index)
+void AWeapon_Base::OnOverlapEnd_Implementation(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom, int32 _Index)
 {
 }
 

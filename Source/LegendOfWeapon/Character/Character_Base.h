@@ -177,11 +177,11 @@ protected:
 		, FVector  _vNormalImpulse, const FHitResult& _Hit);
 
 	UFUNCTION()
-	virtual void BeginOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+	virtual void OnOverlapBegin(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
 		, int32 _Index, bool _bFromSweep, const FHitResult& _HitResult);
 
 	UFUNCTION()
-	virtual void EndOverlap(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
+	virtual void OnOverlapEnd(UPrimitiveComponent* _PrimitiveCom, AActor* _OtherActor, UPrimitiveComponent* _OtherPrimitiveCom
 		, int32 _Index);
 
 	public:
