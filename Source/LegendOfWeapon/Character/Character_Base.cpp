@@ -6,11 +6,12 @@
 #include "../GameMode/ServerPlayerController_Base.h"
 #include "../ui/MainHUD_Base.h"
 #include "../ui/PlayerInfo_Base.h"
-
+#include "AnimInst/AnimInstance_Base.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "../LegendOfWeapon.h"
+
 
 // Sets default values
 ACharacter_Base::ACharacter_Base()
@@ -154,6 +155,8 @@ void ACharacter_Base::Tick(float DeltaTime)
 	bIsAPressed = false;
 	bIsDPressed = false;
 	
+
+	DriveAnimVar();
 }
 
 // Called to bind functionality to input
@@ -741,3 +744,21 @@ void ACharacter_Base::EndHitDetect()
 	}
 }
 
+void ACharacter_Base::DriveAnimVar()
+{
+	WorldVelocity = GetCharacterMovement()->Velocity;
+	WorldRotation = GetActorRotation();
+	WorldLocation = GetActorLocation();
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		UAnimInstance_Base* anim_inst = Cast<UAnimInstance_Base>(AnimInstance);
+		if (IsValid(anim_inst))
+		{
+			anim_inst->WorldVelocity = WorldVelocity;
+			anim_inst->WorldRotation = WorldRotation;
+			anim_inst->WorldLocation = WorldLocation;
+		}
+	}
+}

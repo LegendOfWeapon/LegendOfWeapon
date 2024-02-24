@@ -86,6 +86,11 @@ protected:
 		float CurrentHealth;
 
 
+#pragma region Movement
+		FVector  WorldVelocity = FVector();
+		FRotator WorldRotation = FRotator();
+		FVector  WorldLocation = FVector();
+#pragma endregion
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -94,8 +99,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TSoftObjectPtr<UIADataAsset>			InputActionSetting;
 
-
-
+	void DriveAnimVar();
 public:
 	TSoftObjectPtr<UAnimMontage> GetDefaultMontage() { return DefaultMontage; }
 

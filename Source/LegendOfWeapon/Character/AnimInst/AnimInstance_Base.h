@@ -58,6 +58,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocoMotion")
 	FVector PreTickLastLocation = FVector(0.0f, 0.0f, 0.0f);
 
+#pragma region Movement
+	FVector  WorldVelocity = FVector();
+	FRotator WorldRotation = FRotator();
+	FVector  WorldLocation = FVector();
+#pragma endregion
+
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeBeginPlay() override;
