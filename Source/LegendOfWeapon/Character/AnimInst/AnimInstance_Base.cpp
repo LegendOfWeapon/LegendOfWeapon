@@ -21,6 +21,20 @@ void UAnimInstance_Base::NativeUpdateAnimation(float _fDeltaTime)
 {
 	if (!IsValid(Character) || !IsValid(Movement))
 		return;
+
+
+	UpdateLocoMotionVariables(_fDeltaTime);
+}
+
+void UAnimInstance_Base::UpdateLocoMotionVariables(float _fDeltaTime)
+{
+	if(IsValid(Character))
+	{
+		DistplacementSinceLastUpdate = (Character->GetActorLocation() - PreTickLastLocation).Size2D();
+
+		PreTickLastLocation = Character->GetActorLocation();
+
+	}
 }
 
 

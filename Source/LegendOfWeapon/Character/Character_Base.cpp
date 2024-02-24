@@ -237,7 +237,7 @@ void ACharacter_Base::ServerSetAttackTypes_Implementation(EAttackTypes _AttackTy
 // ==================
 void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 {
-	
+
 	//UE_LOG(LogTemp, Warning, TEXT("Character Move Function"));
 
 	FVector2D vInput = _Instance.GetValue().Get<FVector2D>();
@@ -276,18 +276,18 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 	{
 		bIsWPressed = false;
 		bIsSPressed = false;
-		bIsAPressed = true;
-		bIsDPressed = false;
-		AttackType = EAttackTypes::A_LightAttack;
+		bIsAPressed = false;
+		bIsDPressed = true;
+		AttackType = EAttackTypes::D_LightAttack;
 		ServerSetAttackTypes(AttackType);
 	}
 	else if (vInput.X == 0.f && vInput.Y < 0.f)
 	{
 		bIsWPressed = false;
 		bIsSPressed = false;
-		bIsAPressed = false;
-		bIsDPressed = true;
-		AttackType = EAttackTypes::D_LightAttack;
+		bIsAPressed = true;
+		bIsDPressed = false;
+		AttackType = EAttackTypes::A_LightAttack;
 		ServerSetAttackTypes(AttackType);
 	}
 	else if (vInput.X > 0.f && vInput.Y > 0.f)
@@ -328,10 +328,13 @@ void ACharacter_Base::Move(const FInputActionInstance& _Instance)
 	}
 
 
+
+	float offset = 0.5f; // 속도 넘 빨라서 늦춤. 추후 변동 가능.
+
 	if (vInput.X != 0.f && !bIsAttacking)
-		GetCharacterMovement()->AddInputVector(GetActorForwardVector() * vInput.X);
+		GetCharacterMovement()->AddInputVector(GetActorForwardVector() * vInput.X * offset);
 	if (vInput.Y != 0.f && !bIsAttacking)
-		GetCharacterMovement()->AddInputVector(GetActorRightVector() * vInput.Y);
+		GetCharacterMovement()->AddInputVector(GetActorRightVector() * vInput.Y* offset);
 }
 
 void ACharacter_Base::MoveCanceled(const FInputActionInstance& _Instance)

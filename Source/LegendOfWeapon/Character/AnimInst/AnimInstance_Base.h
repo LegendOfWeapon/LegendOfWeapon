@@ -51,13 +51,20 @@ public:
 	bool IsAttack;
 
 
+	// LocoMotion
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocoMotion")
+	float DistplacementSinceLastUpdate = 0.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocoMotion")
+	FVector PreTickLastLocation = FVector(0.0f, 0.0f, 0.0f);
 
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float _fDeltaTime) override;
 
+protected:
+	void UpdateLocoMotionVariables(float _fDeltaTime);
 	//UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Send Character State")
 	//void SendCharacterState(ECharacterState _CharacterState);
 	//virtual void SendCharacterState_Implementation(ECharacterState _CharacterState) override;

@@ -36,9 +36,10 @@ enum class EAttackTypes : uint8
 UENUM(BlueprintType)
 enum class ECharacterState : uint8
 {
-	Idle,
+	Idle, // 움직임X
 	Disabled,
 	Attacking,
 	Blocking,
 	Dead,
+	Move, // 움직임.
 };
