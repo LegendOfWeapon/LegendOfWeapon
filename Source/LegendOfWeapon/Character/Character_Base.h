@@ -87,9 +87,22 @@ protected:
 
 
 #pragma region Movement
-		FVector  WorldVelocity = FVector();
-		FRotator WorldRotation = FRotator();
-		FVector  WorldLocation = FVector();
+		FVector  Location = FVector();
+		FRotator Rotation = FRotator();
+
+		FVector  ForwardVector = FVector();
+		FVector  RightVector = FVector();
+		FVector  Velocity = FVector();
+		FVector  Accel = FVector();
+
+		float    GroundSpeed = 0.0f;
+		float	 Speed = 0.0f;
+		float	 Direction = 0.0f;
+
+		FRotator MouseAim = FRotator();
+
+		bool     IsFall = false;
+		bool     IsMove = false;
 #pragma endregion
 
 private:

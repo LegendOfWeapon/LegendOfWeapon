@@ -30,9 +30,9 @@ void UAnimInstance_Base::UpdateLocoMotionVariables(float _fDeltaTime)
 {
 	if(IsValid(Character))
 	{
-		DistplacementSinceLastUpdate = (WorldLocation - PreTickLastLocation).Size2D();
+		DistplacementSinceLastUpdate = (Location - PreTickLastLocation).Size2D();
 
-		PreTickLastLocation = WorldLocation;
+		PreTickLastLocation = Location;
 
 	}
 }

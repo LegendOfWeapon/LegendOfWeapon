@@ -58,10 +58,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocoMotion")
 	FVector PreTickLastLocation = FVector(0.0f, 0.0f, 0.0f);
 
+
 #pragma region Movement
-	FVector  WorldVelocity = FVector();
-	FRotator WorldRotation = FRotator();
-	FVector  WorldLocation = FVector();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) FVector  Location = FVector();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) FRotator Rotation = FRotator();
+
+ 	UPROPERTY(EditAnywhere, BlueprintReadWrite) FVector  ForwardVector = FVector();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) FVector  RightVector = FVector();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) FVector  Velocity = FVector();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) FVector  Accel = FVector();
+
+ 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float	 GroundSpeed = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float	 Speed = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float	 Direction = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) FRotator MouseAim = FRotator();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool     IsFall = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool     IsMove = false;
 #pragma endregion
 
 public:

@@ -2,7 +2,7 @@
 
 #include "Character_Base.h"
 #include "../Header/global.h"
-
+#include "Kismet/KismetMathLibrary.h"
 #include "../GameMode/ServerPlayerController_Base.h"
 #include "../ui/MainHUD_Base.h"
 #include "../ui/PlayerInfo_Base.h"
@@ -746,9 +746,41 @@ void ACharacter_Base::EndHitDetect()
 
 void ACharacter_Base::DriveAnimVar()
 {
-	WorldVelocity = GetCharacterMovement()->Velocity;
-	WorldRotation = GetActorRotation();
-	WorldLocation = GetActorLocation();
+	Location = GetActorLocation();
+	Rotation = GetActorRotation();
+	ForwardVector = GetActorForwardVector();
+	RightVector = GetActorRightVector();
+
+	UCharacterMovementComponent* move_comp = GetCharacterMovement();
+	if (IsValid(move_comp))
+	{
+		Velocity = move_comp->Velocity;
+		Accel	 = move_comp->GetCurrentAcceleration();
+		IsFall   = move_comp->IsFalling();
+	}
+
+	GroundSpeed = Velocity.Length();
+	Speed = FVector::DotProduct(Velocity, ForwardVector)/ 2.777778;
+	Direction = FVector::DotProduct(Velocity, RightVector)/ 2.777778;
+
+
+	IsMove = (GroundSpeed > 3.f) && (Accel != FVector(0.f, 0.f, 0.f));
+	
+	FRotator pre_aim =MouseAim;
+
+	// FRotator를 FQuat로 변환
+	FQuat quat_cotrol_rotation = FQuat(GetControlRotation());
+	FQuat quat_rotation = FQuat(Rotation);
+	FQuat delta_quat = quat_rotation * quat_cotrol_rotation.Inverse();
+	FRotator delta_rotator = delta_quat.Rotator();
+
+	float time = 0.014017;
+	float speed = 15.f;
+	FRotator cur_aim = UKismetMathLibrary::RInterpTo(pre_aim, delta_rotator, time, speed);
+
+	float aim_pitch = UKismetMathLibrary::ClampAngle(cur_aim.Pitch, -90.f, 90.f)/90.f;
+	float aim_yaw = UKismetMathLibrary::ClampAngle(cur_aim.Yaw, -90.f, 90.f)/90.f;
+	MouseAim = FRotator(aim_pitch, aim_yaw, 0.f );
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance != nullptr)
@@ -756,9 +788,23 @@ void ACharacter_Base::DriveAnimVar()
 		UAnimInstance_Base* anim_inst = Cast<UAnimInstance_Base>(AnimInstance);
 		if (IsValid(anim_inst))
 		{
-			anim_inst->WorldVelocity = WorldVelocity;
-			anim_inst->WorldRotation = WorldRotation;
-			anim_inst->WorldLocation = WorldLocation;
+			anim_inst->Location = Location;
+			anim_inst->Rotation = Rotation;
+			anim_inst->ForwardVector = ForwardVector;
+			anim_inst->RightVector = RightVector;
+
+			// move comp
+			anim_inst->Velocity = Velocity;
+			anim_inst->Accel = Accel;
+			anim_inst->IsFall = IsFall;
+
+			anim_inst->IsMove = IsMove;
+			anim_inst->GroundSpeed = GroundSpeed;
+			anim_inst->Speed = Speed;
+			anim_inst->Direction = Direction;
+			anim_inst->MouseAim = MouseAim;
+			
 		}
 	}
 }
+
